@@ -9,7 +9,10 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSSpeechRecognitionUsageDescription": "This app uses speech synthesis to read text aloud."
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -19,7 +22,18 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "permissions": [],
+      "softwareKeyboardLayoutMode": "resize",
+      "navigationBar": {
+        "visible": "immersive",
+        "backgroundColor": "#00000000"
+      },
+      "androidStatusBar": {
+        "backgroundColor": "#00000000",
+        "translucent": true,
+        "barStyle": "dark-content"
+      }
     },
     "web": {
       "output": "static",
@@ -37,6 +51,15 @@
           "dark": {
             "backgroundColor": "#000000"
           }
+        }
+      ],
+      "expo-secure-store",
+      [
+        "expo-navigation-bar",
+        {
+          "backgroundColor": "#00000000",
+          "visibility": "hidden",
+          "barStyle": "light-content"
         }
       ]
     ],
