@@ -1,4 +1,4 @@
-import { Ionicons } from "@expo/vector-icons"; // Import Ionicons for the eye icon
+import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
 import {
   Alert,
@@ -11,7 +11,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { supabase } from "../config/supabase"; // Import supabase
+import { supabase } from "../config/supabase";
 import { useAuth } from "../context/AuthContext";
 import { useLanguage } from "../context/LanguageContext";
 import { theme } from "../styles/theme";
@@ -19,37 +19,51 @@ import { theme } from "../styles/theme";
 const LoginScreen = ({ navigation }) => {
   const { t } = useLanguage();
   const { login } = useAuth();
-  const [identifier, setIdentifier] = useState(""); // Can be email or username
+  const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false); // State for password visibility
+  const [showPassword, setShowPassword] = useState(false);
 
-  // Toggle password visibility - CORRECTED LOGIC
+  // Toggle password visibility
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
 
   const handleLogin = async () => {
-    if (!identifier || !password) {
+    if (!identifier?.trim() || !password) {
       Alert.alert("Error", "Please enter both identifier and password");
       return;
     }
 
     setIsLoading(true);
+    
+    // Set a timeout to prevent hanging
+    const timeoutPromise = new Promise((_, reject) => 
+      setTimeout(() => reject(new Error("Login timeout")), 10000) // 10 second timeout
+    );
+
     try {
-      console.log("Attempting login with:", { identifier });
+      console.log("Attempting login with:", { identifier: identifier.trim() });
 
-      const result = await login(identifier, password);
+      // Race between login and timeout
+      const result = await Promise.race([
+        login(identifier.trim(), password),
+        timeoutPromise
+      ]);
 
-      if (result.success) {
+      if (result?.success) {
         console.log("Login successful, navigating to MainApp");
         navigation.replace("MainApp");
       } else {
-        Alert.alert("Login Error", result.error || "Failed to login. Please try again.");
+        Alert.alert("Login Error", result?.error || "Failed to login. Please try again.");
       }
     } catch (error) {
-      console.log("Login error caught:", error);
-      Alert.alert("Login Error", "Failed to login. Please try again.");
+      console.log("Login error:", error);
+      if (error.message === "Login timeout") {
+        Alert.alert("Timeout", "Login is taking too long. Please check your connection and try again.");
+      } else {
+        Alert.alert("Login Error", "Failed to login. Please check your credentials and try again.");
+      }
     } finally {
       setIsLoading(false);
     }
@@ -60,22 +74,29 @@ const LoginScreen = ({ navigation }) => {
   };
 
   const handleForgotPassword = async () => {
-    if (!identifier) {
+    if (!identifier?.trim()) {
       Alert.alert("Error", "Please enter your email or username first");
       return;
     }
 
     // For password reset, we need email
-    let email = identifier;
+    let email = identifier.trim();
     
     // If identifier is not email, try to find the email
-    if (!identifier.includes('@')) {
+    if (!email.includes('@')) {
       try {
-        const { data: profile, error } = await supabase
+        // Use a timeout for the profile lookup as well
+        const profilePromise = supabase
           .from('profiles')
           .select('email')
-          .eq('username', identifier)
+          .eq('username', email)
           .single();
+
+        const timeoutPromise = new Promise((_, reject) => 
+          setTimeout(() => reject(new Error("Timeout")), 5000)
+        );
+
+        const { data: profile, error } = await Promise.race([profilePromise, timeoutPromise]);
 
         if (error || !profile) {
           Alert.alert(
@@ -87,7 +108,8 @@ const LoginScreen = ({ navigation }) => {
         }
         email = profile.email;
       } catch (error) {
-        Alert.alert("Error", "Unable to find email for this username.");
+        console.log("Profile lookup error:", error);
+        Alert.alert("Error", "Unable to find email for this username. Please try with your email address.");
         return;
       }
     }
@@ -102,6 +124,7 @@ const LoginScreen = ({ navigation }) => {
         [{ text: "OK" }]
       );
     } catch (error) {
+      console.log("Password reset error:", error);
       Alert.alert("Error", "Failed to send reset email. Please try again.");
     }
   };
@@ -111,7 +134,10 @@ const LoginScreen = ({ navigation }) => {
       style={styles.container}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
+      <ScrollView 
+        contentContainerStyle={styles.scrollContainer}
+        keyboardShouldPersistTaps="handled"
+      >
         <View style={styles.header}>
           <Text style={styles.title}>{t("login.title") || "Welcome Back"}</Text>
           <Text style={styles.subtitle}>
@@ -131,6 +157,8 @@ const LoginScreen = ({ navigation }) => {
               placeholder="Enter your email or username"
               autoCapitalize="none"
               autoComplete="email"
+              autoCorrect={false}
+              spellCheck={false}
             />
           </View>
 
@@ -144,15 +172,17 @@ const LoginScreen = ({ navigation }) => {
                 value={password}
                 onChangeText={setPassword}
                 placeholder="Enter your password"
-                secureTextEntry={!showPassword} // CORRECTED: Show password when showPassword is true
+                secureTextEntry={!showPassword}
                 autoComplete="password"
+                autoCorrect={false}
+                spellCheck={false}
               />
               <TouchableOpacity
                 style={styles.eyeIcon}
                 onPress={togglePasswordVisibility}
               >
                 <Ionicons 
-                  name={showPassword ? "eye" : "eye-off"} // CORRECTED: eye when visible, eye-off when hidden
+                  name={showPassword ? "eye" : "eye-off"}
                   size={24} 
                   color={theme.colors.textSecondary} 
                 />
@@ -172,11 +202,11 @@ const LoginScreen = ({ navigation }) => {
           <TouchableOpacity
             style={[
               styles.loginButton,
-              (!identifier || !password || isLoading) &&
+              (!identifier?.trim() || !password || isLoading) &&
                 styles.loginButtonDisabled,
             ]}
             onPress={handleLogin}
-            disabled={!identifier || !password || isLoading}
+            disabled={!identifier?.trim() || !password || isLoading}
           >
             <Text style={styles.loginButtonText}>
               {isLoading ? "Logging in..." : t("login.login") || "Login"}
@@ -250,7 +280,6 @@ const styles = StyleSheet.create({
     padding: 15,
     fontSize: 16,
   },
-  // New styles for password input with eye icon
   passwordInputContainer: {
     position: "relative",
     flexDirection: "row",
@@ -264,12 +293,12 @@ const styles = StyleSheet.create({
     borderRadius: theme.borderRadius.md,
     padding: 15,
     fontSize: 16,
-    paddingRight: 50, // Add padding to prevent text from being hidden behind the eye icon
+    paddingRight: 50,
   },
   eyeIcon: {
     position: "absolute",
     right: 15,
-    padding: 5, // Add padding for better touch area
+    padding: 5,
   },
   forgotPassword: {
     alignSelf: "flex-end",

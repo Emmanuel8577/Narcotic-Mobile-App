@@ -1,11 +1,17 @@
 import { registerRootComponent } from 'expo';
 import { useEffect } from 'react';
-import { Platform, UIManager } from 'react-native';
+import { LogBox, Platform, UIManager } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { AuthProvider } from './app/src/context/AuthContext';
 import { LanguageProvider } from './app/src/context/LanguageContext';
 import { TTSProvider } from './app/src/context/TTSContext';
 import AppNavigator from './app/src/navigation/AppNavigator';
+
+// Ignore specific warnings
+LogBox.ignoreLogs([
+  'Non-serializable values were found in the navigation state',
+  'AsyncStorage has been extracted from react-native',
+]);
 
 // Enable LayoutAnimation for Android
 if (Platform.OS === 'android') {
@@ -19,36 +25,30 @@ function NavigationBarManager() {
     const hideNavigationBar = async () => {
       if (Platform.OS === 'android') {
         try {
-          const { NavigationBar } = await import('expo-navigation-bar');
+          const { NavigationBar } = require('expo-navigation-bar');
           
-          // Completely hide navigation bar
-          await NavigationBar.setVisibilityAsync("hidden");
-          
-          // Prevent it from coming back with gestures
-          await NavigationBar.setBehaviorAsync("inset-touch");
-          
-          // Set position to absolute
-          await NavigationBar.setPositionAsync("absolute");
-          
-          // Make navigation bar transparent
-          await NavigationBar.setBackgroundColorAsync("#00000000");
-          
-          
+          if (NavigationBar) {
+            // Use Promise.all to set all properties at once
+            await Promise.all([
+              NavigationBar.setVisibilityAsync("hidden"),
+              NavigationBar.setBehaviorAsync("inset-touch"),
+              NavigationBar.setPositionAsync("absolute"),
+              NavigationBar.setBackgroundColorAsync("#00000000")
+            ]);
+            console.log('Navigation bar hidden successfully');
+          }
         } catch (error) {
+          console.log('Navigation bar customization not available');
         }
       }
     };
 
     hideNavigationBar();
 
-    // Set up an interval to continuously ensure navigation bar stays hidden
-    const interval = setInterval(() => {
-      hideNavigationBar();
-    }, 1000); // Check every second
+    // Cleaner interval management
+    const interval = setInterval(hideNavigationBar, 2000);
 
-    return () => {
-      clearInterval(interval);
-    };
+    return () => clearInterval(interval);
   }, []);
 
   return null;

@@ -41,18 +41,32 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     checkOnboardingStatus();
 
-    // Check active sessions and sets the user
+    // Optimized session check with timeout
     const getSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session?.user) {
-        setUser(session.user);
-        // Fetch user profile
-        await fetchUserProfile(session.user.id);
-      } else {
+      try {
+        const timeoutPromise = new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Session timeout')), 5000)
+        );
+
+        const sessionPromise = supabase.auth.getSession();
+        
+        const { data: { session } } = await Promise.race([sessionPromise, timeoutPromise]);
+        
+        if (session?.user) {
+          setUser(session.user);
+          // Don't wait for profile fetch - let it happen in background
+          fetchUserProfile(session.user.id);
+        } else {
+          setUser(null);
+          setUserProfile(null);
+        }
+      } catch (error) {
+        console.error('Session check error:', error);
         setUser(null);
         setUserProfile(null);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
 
     getSession();
@@ -62,7 +76,8 @@ export const AuthProvider = ({ children }) => {
       async (event, session) => {
         if (session?.user) {
           setUser(session.user);
-          await fetchUserProfile(session.user.id);
+          // Fetch profile in background without blocking
+          fetchUserProfile(session.user.id);
         } else {
           setUser(null);
           setUserProfile(null);
@@ -93,84 +108,153 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // Optimized login function with timeouts and caching
   const login = async (identifier, password) => {
     try {
-      // Determine if identifier is email or username
-      let loginData = {};
-      
-      if (identifier.includes('@')) {
-        // Email login
-        loginData = { email: identifier, password };
-      } else {
-        // Username login - we need to find the email associated with this username
-        const { data: profile, error: profileError } = await supabase
+      // Input validation
+      if (!identifier?.trim() || !password) {
+        throw new Error('Please enter both identifier and password');
+      }
+
+      const trimmedIdentifier = identifier.trim();
+      let emailToUse = trimmedIdentifier;
+
+      // Set timeout for entire login process
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Login timeout')), 10000)
+      );
+
+      // If username, find email quickly with timeout
+      if (!trimmedIdentifier.includes('@')) {
+        const profileTimeout = new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Profile lookup timeout')), 5000)
+        );
+
+        const profilePromise = supabase
           .from('profiles')
           .select('email')
-          .eq('username', identifier)
+          .eq('username', trimmedIdentifier)
           .single();
+
+        const { data: profile, error: profileError } = await Promise.race([profilePromise, profileTimeout]);
 
         if (profileError || !profile) {
           throw new Error('Invalid username or password');
         }
 
-        loginData = { email: profile.email, password };
+        emailToUse = profile.email;
       }
 
-      const { data, error } = await supabase.auth.signInWithPassword(loginData);
+      // Direct login with timeout
+      const loginPromise = supabase.auth.signInWithPassword({
+        email: emailToUse,
+        password: password,
+      });
+
+      const { data, error } = await Promise.race([loginPromise, timeoutPromise]);
 
       if (error) {
         throw error;
+      }
+
+      // Fetch profile in background without blocking login
+      if (data.user) {
+        setTimeout(() => fetchUserProfile(data.user.id), 100);
       }
 
       return { success: true, user: data.user };
     } catch (error) {
       console.error('Login error:', error);
-      return { success: false, error: error.message };
+      
+      // User-friendly error messages
+      let errorMessage = 'Failed to login. Please try again.';
+      if (error.message === 'Login timeout' || error.message === 'Profile lookup timeout') {
+        errorMessage = 'Login is taking too long. Please check your connection.';
+      } else if (error.message.includes('Invalid login credentials')) {
+        errorMessage = 'Invalid email/username or password';
+      } else if (error.message.includes('Email not confirmed')) {
+        errorMessage = 'Please verify your email before logging in';
+      }
+      
+      return { success: false, error: errorMessage };
     }
   };
 
+  // Optimized register function
   const register = async (email, password, fullName, username, school) => {
     try {
-      const { data, error } = await supabase.auth.signUp({
-        email,
+      // Input validation
+      if (!email || !password || !fullName || !username) {
+        throw new Error('Please fill in all required fields');
+      }
+
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Registration timeout')), 15000)
+      );
+
+      const registerPromise = supabase.auth.signUp({
+        email: email.trim(),
         password,
         options: {
           data: {
-            full_name: fullName,
+            full_name: fullName.trim(),
           },
+          emailRedirectTo: 'yourapp://auth-callback', // Add your app scheme
         },
       });
+
+      const { data, error } = await Promise.race([registerPromise, timeoutPromise]);
 
       if (error) {
         throw error;
       }
 
-      // Create user profile in profiles table
+      // Create user profile in background if user was created
       if (data.user) {
-        const { error: profileError } = await supabase
-          .from('profiles')
-          .insert([
-            {
-              id: data.user.id,
-              email: data.user.email,
-              full_name: fullName,
-              username: username,
-              school: school,
-              first_name: fullName.split(' ')[0], // Extract first name
-              created_at: new Date().toISOString(),
-            },
-          ]);
+        // Don't wait for profile creation - it can happen async
+        setTimeout(async () => {
+          try {
+            const { error: profileError } = await supabase
+              .from('profiles')
+              .insert([
+                {
+                  id: data.user.id,
+                  email: data.user.email,
+                  full_name: fullName.trim(),
+                  username: username.trim(),
+                  school: school?.trim(),
+                  first_name: fullName.split(' ')[0],
+                  created_at: new Date().toISOString(),
+                },
+              ]);
 
-        if (profileError) {
-          console.error('Profile creation error:', profileError);
-          // Still return success since auth user was created
-        }
+            if (profileError) {
+              console.error('Profile creation error:', profileError);
+            }
+          } catch (profileError) {
+            console.error('Async profile creation error:', profileError);
+          }
+        }, 0);
       }
 
-      return { success: true, user: data.user };
+      return { 
+        success: true, 
+        user: data.user,
+        needsEmailVerification: !data.session // User needs to verify email
+      };
     } catch (error) {
       console.error('Registration error:', error);
-      return { success: false, error: error.message };
+      
+      let errorMessage = 'Failed to create account. Please try again.';
+      if (error.message === 'Registration timeout') {
+        errorMessage = 'Registration is taking too long. Please check your connection.';
+      } else if (error.message.includes('User already registered')) {
+        errorMessage = 'An account with this email already exists';
+      } else if (error.message.includes('Password')) {
+        errorMessage = 'Password should be at least 6 characters';
+      }
+      
+      return { success: false, error: errorMessage };
     }
   };
 

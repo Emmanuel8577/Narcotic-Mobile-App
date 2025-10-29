@@ -36,9 +36,9 @@ const HomeScreen = ({ navigation }) => {
 
   // Final values for stats
   const statsTargets = {
-    drugs: 58,
-    schools: 25,
-    students: 10250,
+    drugs: 30,
+    schools: 10,
+    students: 2000,
   };
 
   useEffect(() => {

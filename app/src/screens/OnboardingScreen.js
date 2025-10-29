@@ -157,7 +157,7 @@ const OnboardingScreen = ({ navigation }) => {
     return featureElements;
   };
 
-  // Render language cards without map
+  // Render language cards without map - Updated with smaller buttons
   const renderLanguageCards = () => {
     const languages = [
       { code: 'en', flag: '🇺🇸', name: 'English', native: 'English', colors: ['#3B82F6', '#3B82F6DD'] },
@@ -333,7 +333,7 @@ const OnboardingScreen = ({ navigation }) => {
       {/* Slide Content */}
       {renderSlide()}
 
-      {/* Navigation Buttons */}
+      {/* Navigation Buttons - Updated with better positioning */}
       <View style={styles.footer}>
         <TouchableOpacity style={styles.skipButton} onPress={handleSkip}>
           <Text style={styles.skipText}>
@@ -367,7 +367,7 @@ const OnboardingScreen = ({ navigation }) => {
   );
 };
 
-// Safe styles with fallbacks
+// Safe styles with fallbacks - Updated styles for smaller buttons and better positioning
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -376,9 +376,9 @@ const styles = StyleSheet.create({
   // New Sign Up Button Styles - Fixed positioning
   signUpContainer: {
     position: 'absolute',
-    top: 60, // Positioned at the top
-    right: 16, // Pushed to the right edge
-    zIndex: 1000, // High z-index to ensure it's above everything
+    top: 85,
+    right: 16,
+    zIndex: 1000,
   },
   signUpButton: {
     borderRadius: 20,
@@ -406,8 +406,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     paddingHorizontal: 20,
-    paddingTop: 60,
-    paddingBottom: 20,
+    paddingTop: 80,
+    paddingBottom: 12,
   },
   progressDot: {
     width: 8,
@@ -430,6 +430,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 24,
+    paddingBottom: 100, // Added padding to accommodate buttons
   },
   centeredContent: {
     width: '100%',
@@ -466,7 +467,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textAlign: 'center',
     color: theme?.colors?.textSecondary || '#6B7280',
-    marginBottom: 40,
+    marginBottom: 30, // Reduced margin to fit better
     lineHeight: 24,
     paddingHorizontal: 8,
   },
@@ -504,64 +505,78 @@ const styles = StyleSheet.create({
     color: theme?.colors?.text || '#1F2937',
     flex: 1,
   },
+  // Updated language grid and card styles for smaller buttons
   languageGrid: {
-    width: '100%',
-    gap: 12,
+    width: '90%',
+    gap: 10, // Reduced gap
+    marginBottom: 90,
   },
   languageCard: {
-    borderRadius: 16,
+    borderRadius: 12, // Smaller borderRadius
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 8,
-    elevation: 5,
+    shadowOffset: { width: 0, height: 2 }, // Reduced shadow
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
     overflow: 'hidden',
+    height: 80, // Fixed height for consistency
   },
   languageGradient: {
-    padding: 24,
+    padding: 16, // Reduced padding
     alignItems: 'center',
     position: 'relative',
+    flexDirection: 'row', // Horizontal layout
+    justifyContent: 'flex-start',
+    height: '100%',
   },
   languageFlag: {
-    fontSize: 32,
-    marginBottom: 8,
+    fontSize: 24, // Smaller flag
+    marginRight: 12,
   },
   languageName: {
-    fontSize: 20,
+    fontSize: 16, // Smaller font
     fontWeight: '700',
     color: '#FFFFFF',
-    marginBottom: 4,
+    marginBottom: 2,
   },
   languageNative: {
-    fontSize: 14,
+    fontSize: 12, // Smaller font
     color: 'rgba(255,255,255,0.85)',
     fontWeight: '500',
   },
   selectionRing: {
     position: 'absolute',
-    top: 16,
-    right: 16,
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    borderWidth: 2,
+    top: 12,
+    right: 12,
+    width: 16, // Smaller
+    height: 16, // Smaller
+    borderRadius: 8,
+    borderWidth: 1.5,
     borderColor: 'rgba(255,255,255,0.5)',
     alignItems: 'center',
     justifyContent: 'center',
   },
   selectionDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
+    width: 6, // Smaller
+    height: 6, // Smaller
+    borderRadius: 3,
     backgroundColor: '#FFFFFF',
   },
+  // Updated footer for better positioning
   footer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 24,
-    paddingBottom: 40,
+    paddingHorizontal: 34,
+    paddingBottom: 100, // Reduced padding
     paddingTop: 20,
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: theme?.colors?.background || '#FFFFFF',
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(0,0,0,0.05)',
   },
   skipButton: {
     padding: 12,
@@ -572,7 +587,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   nextButton: {
-    borderRadius: 24,
+    borderRadius: 20, // Slightly smaller
     shadowColor: theme?.colors?.primary || '#3B82F6',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
@@ -581,11 +596,11 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   nextGradient: {
-    paddingHorizontal: 32,
-    paddingVertical: 16,
+    paddingHorizontal: 28, // Slightly reduced
+    paddingVertical: 14, // Slightly reduced
     alignItems: 'center',
     justifyContent: 'center',
-    minWidth: 140,
+    minWidth: 130, // Slightly smaller
   },
   nextText: {
     fontSize: 16,

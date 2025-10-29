@@ -25,7 +25,7 @@ const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
 // Calculate tab bar height based on platform
-const TAB_BAR_HEIGHT = Platform.OS === 'android' ? 80 : 85;
+const TAB_BAR_HEIGHT = Platform.OS === 'android' ? 90 : 95;
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 // Safe theme access
@@ -113,9 +113,9 @@ const MainTabs = () => {
       borderTopWidth: 1,
       borderTopColor: '#E5E5E5',
       height: TAB_BAR_HEIGHT,
-      paddingBottom: Platform.OS === 'android' ? 10 : 18, // Reduced bottom padding to move content up
-      paddingTop: 20, // Increased top padding to push icons and text upward
-      elevation: 20,
+      paddingBottom: Platform.OS === 'android' ? 6 : 12, // Reduced bottom padding to move content up
+      paddingTop: 2, // Increased top padding to push icons and text upward
+      elevation: 25,
       shadowColor: '#000',
       shadowOffset: { width: 0, height: -4 },
       shadowOpacity: 0.15,

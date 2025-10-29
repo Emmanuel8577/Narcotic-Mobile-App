@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import React from 'react';
+import { useEffect, useMemo } from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { useTTS } from '../../context/TTSContext';
 import { theme } from '../../styles/theme';
@@ -11,7 +11,18 @@ const TTSControls = ({
   onPlay,
   onStop 
 }) => {
-  const { isSpeaking, speak, stop, toggleSpeech } = useTTS();
+  const { isSpeaking, speak, stop } = useTTS();
+
+  // Safe text validation - MUST be before any conditional returns
+  const safeText = useMemo(() => {
+    if (text === null || text === undefined) return '';
+    return String(text).trim();
+  }, [text]);
+
+  // Debug render - MUST be before any conditional returns
+  useEffect(() => {
+    console.log('TTSControls - isSpeaking changed:', isSpeaking);
+  }, [isSpeaking]);
 
   // Safe theme access with fallbacks
   const getThemeValue = (path, fallback) => {
@@ -24,39 +35,34 @@ const TTSControls = ({
     }
   };
 
-  // Safe text validation
-  const safeText = React.useMemo(() => {
-    if (text === null || text === undefined) return '';
-    return String(text).trim();
-  }, [text]);
-
   const handleToggle = async () => {
     try {
+      console.log('TTSControls - handleToggle called, isSpeaking:', isSpeaking);
+      
       if (!safeText) {
         console.warn('No text provided to TTSControls');
         return;
       }
 
       if (isSpeaking) {
-        // Stop the speech
+        // Stop the speech immediately
+        console.log('Stopping speech...');
         await stop();
-        onStop?.();
+        console.log('Speech stopped');
+        if (typeof onStop === 'function') {
+          onStop();
+        }
       } else {
         // Start new speech
+        console.log('Starting speech...');
         await speak(safeText, language);
-        onPlay?.();
+        console.log('Speech started');
+        if (typeof onPlay === 'function') {
+          onPlay();
+        }
       }
     } catch (error) {
       console.error('Error in handleToggle:', error);
-    }
-  };
-
-  const handleStop = async () => {
-    try {
-      await stop();
-      onStop?.();
-    } catch (error) {
-      console.error('Error in handleStop:', error);
     }
   };
 
@@ -76,46 +82,50 @@ const TTSControls = ({
     }
   };
 
-  // Get safe icon name
-  const getPlayStopIconName = () => {
-    return isSpeaking ? "stop" : "play";
+  // Get icon name based on speaking state
+  const getIconName = () => {
+    return isSpeaking ? "stop-circle" : "play-circle";
   };
 
   // Get safe colors
   const getPrimaryColor = () => getThemeValue('colors.primary', '#3B82F6');
+  const getErrorColor = () => getThemeValue('colors.error', '#EF4444');
   const getBackgroundColor = () => getThemeValue('colors.background', '#F9FAFB');
   const getBorderColor = () => getThemeValue('colors.border', '#E5E7EB');
 
-  // Don't render if no text
+  // NOW we can do conditional returns - AFTER all hooks
   if (!safeText) return null;
 
   return (
     <View style={styles.container}>
-      {/* Play/Stop Button */}
       <TouchableOpacity
         style={[
           styles.button,
           { 
             width: getButtonSize(), 
             height: getButtonSize(),
-            backgroundColor: getBackgroundColor(),
-            borderColor: getBorderColor(),
+            backgroundColor: isSpeaking 
+              ? getErrorColor() + '15' // Light red background when playing
+              : getBackgroundColor(),
+            borderColor: isSpeaking 
+              ? getErrorColor() 
+              : getBorderColor(),
           }
         ]}
         onPress={handleToggle}
         disabled={!safeText}
+        activeOpacity={0.7}
       >
         <Ionicons
-          name={getPlayStopIconName()}
+          name={getIconName()}
           size={getIconSize()}
-          color={getPrimaryColor()}
+          color={isSpeaking ? getErrorColor() : getPrimaryColor()}
         />
       </TouchableOpacity>
     </View>
   );
 };
 
-// Safe styles with fallbacks
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
@@ -126,12 +136,12 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 1,
+    borderWidth: 1.5,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 3,
+    elevation: 3,
   },
 });
 
