@@ -1,6 +1,6 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRef, useState } from 'react';
-import { Animated, Dimensions, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Animated, Dimensions, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useLanguage } from '../context/LanguageContext';
 import { theme } from '../styles/theme';
 
@@ -157,7 +157,7 @@ const OnboardingScreen = ({ navigation }) => {
     return featureElements;
   };
 
-  // Render language cards without map - Updated with smaller buttons
+  // Render language cards without map
   const renderLanguageCards = () => {
     const languages = [
       { code: 'en', flag: '🇺🇸', name: 'English', native: 'English', colors: ['#3B82F6', '#3B82F6DD'] },
@@ -184,8 +184,10 @@ const OnboardingScreen = ({ navigation }) => {
             end={{ x: 1, y: 1 }}
           >
             <Text style={styles.languageFlag}>{lang.flag || '🏳️'}</Text>
-            <Text style={styles.languageName}>{lang.name || 'Language'}</Text>
-            <Text style={styles.languageNative}>{lang.native || ''}</Text>
+            <View style={styles.languageTextContainer}>
+              <Text style={styles.languageName}>{lang.name || 'Language'}</Text>
+              <Text style={styles.languageNative}>{lang.native || ''}</Text>
+            </View>
             <View style={styles.selectionRing}>
               <View style={styles.selectionDot} />
             </View>
@@ -207,22 +209,27 @@ const OnboardingScreen = ({ navigation }) => {
             transform: [{ translateX: slideAnim }],
           },
         ]}>
-          <View style={styles.centeredContent}>
-            <View style={styles.illustrationContainer}>
-              <Text style={styles.illustration}>🗣️</Text>
+          <ScrollView 
+            contentContainerStyle={styles.scrollContent}
+            showsVerticalScrollIndicator={false}
+          >
+            <View style={styles.centeredContent}>
+              <View style={styles.illustrationContainer}>
+                <Text style={styles.illustration}>🗣️</Text>
+              </View>
+              
+              <Text style={styles.title}>
+                {safeTranslate('onboarding.slide2.title', 'Choose Your Language')}
+              </Text>
+              <Text style={styles.subtitle}>
+                {safeTranslate('onboarding.slide2.description', 'Select your preferred language for the app content')}
+              </Text>
+              
+              <View style={styles.languageGrid}>
+                {renderLanguageCards()}
+              </View>
             </View>
-            
-            <Text style={styles.title}>
-              {safeTranslate('onboarding.slide2.title', 'Choose Your Language')}
-            </Text>
-            <Text style={styles.description}>
-              {safeTranslate('onboarding.slide2.description', 'Select your preferred language for the app content')}
-            </Text>
-            
-            <View style={styles.languageGrid}>
-              {renderLanguageCards()}
-            </View>
-          </View>
+          </ScrollView>
         </Animated.View>
       );
     }
@@ -236,46 +243,36 @@ const OnboardingScreen = ({ navigation }) => {
           transform: [{ translateX: slideAnim }],
         },
       ]}>
-        <View style={styles.centeredContent}>
-          <View style={styles.illustrationContainer}>
-            <LinearGradient
-              colors={['#2563EB', '#1D4ED8']}
-              style={styles.illustrationBackground}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-            >
-              <Text style={styles.illustration}>💊</Text>
-            </LinearGradient>
+        <ScrollView 
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={styles.centeredContent}>
+            <View style={styles.illustrationContainer}>
+              <LinearGradient
+                colors={['#2563EB', '#1D4ED8']}
+                style={styles.illustrationBackground}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+              >
+                <Text style={styles.illustration}>💊</Text>
+              </LinearGradient>
+            </View>
+            
+            <Text style={styles.title}>
+              {safeTranslate('onboarding.slide1.title', 'Understanding Drug Abuse')}
+            </Text>
+            <Text style={styles.subtitle}>
+              {safeTranslate('onboarding.slide1.description', 'Drug abuse affects millions worldwide. Learn about the dangers and how to protect yourself and your community from substance abuse.')}
+            </Text>
+            
+            <View style={styles.featureList}>
+              {renderFeatureItems()}
+            </View>
           </View>
-          
-          <Text style={styles.title}>
-            {safeTranslate('onboarding.slide1.title', 'Understanding Drug Abuse')}
-          </Text>
-          <Text style={styles.description}>
-            {safeTranslate('onboarding.slide1.description', 'Drug abuse affects millions worldwide. Learn about the dangers and how to protect yourself and your community from substance abuse.')}
-          </Text>
-          
-          <View style={styles.featureList}>
-            {renderFeatureItems()}
-          </View>
-        </View>
+        </ScrollView>
       </Animated.View>
     );
-  };
-
-  // Safe interpolation for progress dots
-  const getProgressDotScale = (isActive) => {
-    if (!isActive) return 1;
-    
-    try {
-      return slideAnim.interpolate({
-        inputRange: [-width * 0.1, 0],
-        outputRange: [1.2, 1],
-      });
-    } catch (error) {
-      console.warn('Progress dot animation error:', error);
-      return 1;
-    }
   };
 
   return (
@@ -301,39 +298,22 @@ const OnboardingScreen = ({ navigation }) => {
         </View>
       )}
       
-      {/* Progress Bar - Manual Dots */}
+      {/* Progress Bar */}
       <View style={styles.progressContainer}>
-        {/* Dot 1 */}
-        <Animated.View
-          style={[
-            styles.progressDot,
-            currentSlide === 0 && styles.progressDotActive,
-            {
-              transform: [{
-                scale: getProgressDotScale(currentSlide === 0)
-              }]
-            }
-          ]}
-        />
-        
-        {/* Dot 2 */}
-        <Animated.View
-          style={[
-            styles.progressDot,
-            currentSlide === 1 && styles.progressDotActive,
-            {
-              transform: [{
-                scale: getProgressDotScale(currentSlide === 1)
-              }]
-            }
-          ]}
-        />
+        <View style={[
+          styles.progressDot,
+          currentSlide === 0 && styles.progressDotActive
+        ]} />
+        <View style={[
+          styles.progressDot,
+          currentSlide === 1 && styles.progressDotActive
+        ]} />
       </View>
 
       {/* Slide Content */}
       {renderSlide()}
 
-      {/* Navigation Buttons - Updated with better positioning */}
+      {/* Navigation Buttons */}
       <View style={styles.footer}>
         <TouchableOpacity style={styles.skipButton} onPress={handleSkip}>
           <Text style={styles.skipText}>
@@ -356,28 +336,19 @@ const OnboardingScreen = ({ navigation }) => {
           </LinearGradient>
         </TouchableOpacity>
       </View>
-
-      {/* Background Decorations */}
-      <View style={styles.backgroundDecor}>
-        <View style={[styles.decorCircle, styles.decorCircle1]} />
-        <View style={[styles.decorCircle, styles.decorCircle2]} />
-        <View style={[styles.decorCircle, styles.decorCircle3]} />
-      </View>
     </View>
   );
 };
 
-// Safe styles with fallbacks - Updated styles for smaller buttons and better positioning
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme?.colors?.background || '#FFFFFF',
   },
-  // New Sign Up Button Styles - Fixed positioning
   signUpContainer: {
     position: 'absolute',
-    top: 85,
-    right: 16,
+    top: height * 0.06,
+    right: 20,
     zIndex: 1000,
   },
   signUpButton: {
@@ -391,59 +362,58 @@ const styles = StyleSheet.create({
   },
   signUpGradient: {
     paddingHorizontal: 20,
-    paddingVertical: 12,
+    paddingVertical: 10,
     alignItems: 'center',
     justifyContent: 'center',
-    minWidth: 90,
+    minWidth: 85,
   },
   signUpText: {
     fontSize: 14,
     color: '#FFFFFF',
     fontWeight: '700',
-    letterSpacing: 0.5,
   },
   progressContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
-    paddingHorizontal: 20,
-    paddingTop: 80,
-    paddingBottom: 12,
+    alignItems: 'center',
+    paddingTop: height * 0.06,
+    paddingBottom: 16,
+    gap: 12,
   },
   progressDot: {
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: '#E0E0E0',
-    marginHorizontal: 6,
+    backgroundColor: '#E5E7EB',
   },
   progressDotActive: {
     width: 24,
     backgroundColor: theme?.colors?.primary || '#3B82F6',
-    shadowColor: theme?.colors?.primary || '#3B82F6',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-    elevation: 3,
   },
   slideContainer: {
     flex: 1,
+    width: '100%',
+  },
+  scrollContent: {
+    flexGrow: 1,
     justifyContent: 'center',
-    alignItems: 'center',
     paddingHorizontal: 24,
-    paddingBottom: 100, // Added padding to accommodate buttons
+    paddingVertical: 20,
   },
   centeredContent: {
     width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
+    minHeight: height * 0.6,
   },
   illustrationContainer: {
     marginBottom: 32,
+    alignItems: 'center',
   },
   illustrationBackground: {
-    width: 140,
-    height: 140,
-    borderRadius: 70,
+    width: 120,
+    height: 120,
+    borderRadius: 60,
     alignItems: 'center',
     justifyContent: 'center',
     shadowColor: '#000',
@@ -453,7 +423,7 @@ const styles = StyleSheet.create({
     elevation: 8,
   },
   illustration: {
-    fontSize: 60,
+    fontSize: 50,
   },
   title: {
     fontSize: 28,
@@ -461,125 +431,126 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 16,
     color: theme?.colors?.text || '#1F2937',
-    letterSpacing: -0.5,
+    lineHeight: 34,
+    paddingHorizontal: 10,
   },
-  description: {
+  subtitle: {
     fontSize: 16,
     textAlign: 'center',
     color: theme?.colors?.textSecondary || '#6B7280',
-    marginBottom: 30, // Reduced margin to fit better
+    marginBottom: 32,
     lineHeight: 24,
     paddingHorizontal: 8,
   },
   featureList: {
     width: '100%',
-    gap: 12,
+    gap: 16,
+    marginTop: 8,
+    marginBottom: 20,
   },
   featureItem: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: theme?.colors?.surface || '#F9FAFB',
-    padding: 16,
-    borderRadius: 12,
+    padding: 18,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: '#F3F4F6',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
-    shadowRadius: 4,
+    shadowRadius: 3,
     elevation: 2,
   },
   featureIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 10,
+    width: 44,
+    height: 44,
+    borderRadius: 12,
     backgroundColor: '#DBEAFE',
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 12,
+    marginRight: 16,
   },
   featureEmoji: {
-    fontSize: 20,
+    fontSize: 22,
   },
   featureText: {
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: '600',
     color: theme?.colors?.text || '#1F2937',
     flex: 1,
   },
-  // Updated language grid and card styles for smaller buttons
   languageGrid: {
-    width: '90%',
-    gap: 10, // Reduced gap
-    marginBottom: 90,
+    width: '100%',
+    gap: 16,
+    marginTop: 8,
+    marginBottom: 20,
   },
   languageCard: {
-    borderRadius: 12, // Smaller borderRadius
+    borderRadius: 20,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 }, // Reduced shadow
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 4,
     overflow: 'hidden',
-    height: 80, // Fixed height for consistency
+    height: 80,
   },
   languageGradient: {
-    padding: 16, // Reduced padding
+    padding: 20,
+    flexDirection: 'row',
     alignItems: 'center',
-    position: 'relative',
-    flexDirection: 'row', // Horizontal layout
-    justifyContent: 'flex-start',
     height: '100%',
   },
   languageFlag: {
-    fontSize: 24, // Smaller flag
-    marginRight: 12,
+    fontSize: 28,
+    marginRight: 16,
+  },
+  languageTextContainer: {
+    flex: 1,
   },
   languageName: {
-    fontSize: 16, // Smaller font
+    fontSize: 18,
     fontWeight: '700',
     color: '#FFFFFF',
-    marginBottom: 2,
+    marginBottom: 4,
   },
   languageNative: {
-    fontSize: 12, // Smaller font
-    color: 'rgba(255,255,255,0.85)',
+    fontSize: 14,
+    color: 'rgba(255,255,255,0.9)',
     fontWeight: '500',
   },
   selectionRing: {
-    position: 'absolute',
-    top: 12,
-    right: 12,
-    width: 16, // Smaller
-    height: 16, // Smaller
-    borderRadius: 8,
-    borderWidth: 1.5,
-    borderColor: 'rgba(255,255,255,0.5)',
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: 'rgba(255,255,255,0.8)',
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: 'rgba(255,255,255,0.2)',
   },
   selectionDot: {
-    width: 6, // Smaller
-    height: 6, // Smaller
-    borderRadius: 3,
+    width: 10,
+    height: 10,
+    borderRadius: 5,
     backgroundColor: '#FFFFFF',
   },
-  // Updated footer for better positioning
   footer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 34,
-    paddingBottom: 100, // Reduced padding
-    paddingTop: 20,
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
+    paddingHorizontal: 24,
+    paddingVertical: 20,
+    paddingBottom: Math.max(40, height * 0.05),
     backgroundColor: theme?.colors?.background || '#FFFFFF',
     borderTopWidth: 1,
-    borderTopColor: 'rgba(0,0,0,0.05)',
+    borderTopColor: 'rgba(0,0,0,0.08)',
+    minHeight: 80,
   },
   skipButton: {
-    padding: 12,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
   },
   skipText: {
     fontSize: 16,
@@ -587,58 +558,26 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   nextButton: {
-    borderRadius: 20, // Slightly smaller
+    borderRadius: 25,
     shadowColor: theme?.colors?.primary || '#3B82F6',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
     elevation: 5,
     overflow: 'hidden',
+    minWidth: 140,
   },
   nextGradient: {
-    paddingHorizontal: 28, // Slightly reduced
-    paddingVertical: 14, // Slightly reduced
+    paddingHorizontal: 32,
+    paddingVertical: 16,
     alignItems: 'center',
     justifyContent: 'center',
-    minWidth: 130, // Slightly smaller
   },
   nextText: {
     fontSize: 16,
     color: '#FFFFFF',
     fontWeight: '700',
     letterSpacing: 0.5,
-  },
-  backgroundDecor: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    zIndex: -1,
-    pointerEvents: 'none',
-  },
-  decorCircle: {
-    position: 'absolute',
-    borderRadius: 999,
-    backgroundColor: 'rgba(59, 130, 246, 0.03)',
-  },
-  decorCircle1: {
-    width: 250,
-    height: 250,
-    top: '8%',
-    left: '-15%',
-  },
-  decorCircle2: {
-    width: 180,
-    height: 180,
-    bottom: '15%',
-    right: '-10%',
-  },
-  decorCircle3: {
-    width: 120,
-    height: 120,
-    top: '45%',
-    left: '65%',
   },
 });
 
