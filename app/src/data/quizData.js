@@ -8,8 +8,7 @@ export const quizData = [
       'Improved memory',
       'Reduced anxiety'
     ],
-    correctAnswer: 1,
-    explanation: 'Cocaine is a stimulant that increases energy, alertness, and heart rate, making "Increased energy and alertness" the correct answer.'
+    correctAnswer: 1
   },
   {
     id: '2',
@@ -20,8 +19,7 @@ export const quizData = [
       'Enhanced cognitive function',
       'Better sleep patterns'
     ],
-    correctAnswer: 1,
-    explanation: 'Heroin use carries a high risk of fatal overdose due to respiratory depression, making "Fatal overdose" the correct answer.'
+    correctAnswer: 1
   },
   {
     id: '3',
@@ -32,8 +30,7 @@ export const quizData = [
       'Lungs',
       'Kidneys'
     ],
-    correctAnswer: 1,
-    explanation: 'The liver is primarily responsible for metabolizing alcohol and is most affected by long-term abuse, making "Liver" the correct answer.'
+    correctAnswer: 1
   },
   {
     id: '4',
@@ -44,8 +41,7 @@ export const quizData = [
       'Neglecting responsibilities',
       'Better physical health'
     ],
-    correctAnswer: 2,
-    explanation: 'Neglecting responsibilities is a common behavioral sign of addiction, making "Neglecting responsibilities" the correct answer.'
+    correctAnswer: 2
   },
   {
     id: '5',
@@ -56,8 +52,7 @@ export const quizData = [
       'Cocaine',
       'Heroin'
     ],
-    correctAnswer: 1,
-    explanation: 'Methamphetamine causes severe dental problems known as "meth mouth" due to dry mouth, teeth grinding, and poor hygiene, making "Methamphetamine" the correct answer.'
+    correctAnswer: 1
   },
   {
     id: '6',
@@ -68,8 +63,7 @@ export const quizData = [
       'Cause hallucinations',
       'Enhance sensory perception'
     ],
-    correctAnswer: 1,
-    explanation: 'Depressants slow down brain activity and central nervous system function, making "Slow down brain activity" the correct answer.'
+    correctAnswer: 1
   },
   {
     id: '7',
@@ -80,8 +74,7 @@ export const quizData = [
       'Codeine',
       'Oxycodone'
     ],
-    correctAnswer: 1,
-    explanation: 'Fentanyl is an extremely potent synthetic opioid that is 50-100 times stronger than morphine, making "Fentanyl" the correct answer.'
+    correctAnswer: 1
   },
   {
     id: '8',
@@ -92,8 +85,7 @@ export const quizData = [
       'Improved memory function',
       'Reduced heart rate'
     ],
-    correctAnswer: 1,
-    explanation: 'MDMA can cause severe dehydration and dangerous increases in body temperature, leading to heat stroke, making "Severe dehydration and heat stroke" the correct answer.'
+    correctAnswer: 1
   },
   {
     id: '9',
@@ -104,8 +96,7 @@ export const quizData = [
       'Heroin',
       'LSD'
     ],
-    correctAnswer: 2,
-    explanation: 'Heroin is derived from morphine, which comes from the opium poppy plant, making "Heroin" the correct answer.'
+    correctAnswer: 2
   },
   {
     id: '10',
@@ -116,8 +107,7 @@ export const quizData = [
       'Increasing energy',
       'Reducing fever'
     ],
-    correctAnswer: 1,
-    explanation: 'Benzodiazepines are primarily used to treat anxiety disorders and insomnia, making "Treating anxiety and insomnia" the correct answer.'
+    correctAnswer: 1
   },
   {
     id: '11',
@@ -128,8 +118,7 @@ export const quizData = [
       'Enhanced memory function',
       'Better academic performance'
     ],
-    correctAnswer: 1,
-    explanation: 'Marijuana use during adolescence can impair brain development and affect memory and learning, making "Impaired brain development" the correct answer.'
+    correctAnswer: 1
   },
   {
     id: '12',
@@ -140,8 +129,7 @@ export const quizData = [
       'The process of becoming addicted',
       'The method of administering drugs'
     ],
-    correctAnswer: 1,
-    explanation: 'Withdrawal syndrome refers to the physical and psychological symptoms that occur when a dependent person stops using a drug, making "Physical and psychological symptoms when stopping drug use" the correct answer.'
+    correctAnswer: 1
   },
   {
     id: '13',
@@ -152,8 +140,7 @@ export const quizData = [
       'PCP',
       'Ketamine'
     ],
-    correctAnswer: 1,
-    explanation: 'LSD is commonly referred to as "acid" and is a powerful hallucinogenic drug, making "LSD" the correct answer.'
+    correctAnswer: 1
   },
   {
     id: '14',
@@ -164,8 +151,7 @@ export const quizData = [
       'Respiratory depression and overdose',
       'Improved coordination'
     ],
-    correctAnswer: 2,
-    explanation: 'Mixing alcohol with other depressants can cause severe respiratory depression, leading to coma or death, making "Respiratory depression and overdose" the correct answer.'
+    correctAnswer: 2
   },
   {
     id: '15',
@@ -176,8 +162,7 @@ export const quizData = [
       'Heroin',
       'MDMA'
     ],
-    correctAnswer: 1,
-    explanation: 'Ketamine is a dissociative anesthetic that can cause users to feel detached from their body and environment, making "Ketamine" the correct answer.'
+    correctAnswer: 1
   },
   {
     id: '16',
@@ -188,8 +173,7 @@ export const quizData = [
       'The ability to handle drug side effects',
       'Legal permission to use drugs'
     ],
-    correctAnswer: 1,
-    explanation: 'Tolerance occurs when a person needs to take larger doses of a drug to achieve the same effect they initially experienced, making "The need for larger doses to achieve the same effect" the correct answer.'
+    correctAnswer: 1
   },
   {
     id: '17',
@@ -200,8 +184,7 @@ export const quizData = [
       'Marijuana',
       'LSD'
     ],
-    correctAnswer: 1,
-    explanation: 'GHB is often associated with drug-facilitated sexual assault due to its sedative and amnesic effects, making "GHB" the correct answer.'
+    correctAnswer: 1
   },
   {
     id: '18',
@@ -212,8 +195,7 @@ export const quizData = [
       'Cause hallucinations',
       'Induce sleep'
     ],
-    correctAnswer: 1,
-    explanation: 'Stimulants increase activity in the central nervous system, leading to increased energy, alertness, and heart rate, making "Increase activity in the central nervous system" the correct answer.'
+    correctAnswer: 1
   },
   {
     id: '19',
@@ -224,8 +206,7 @@ export const quizData = [
       'PCP',
       'DMT'
     ],
-    correctAnswer: 1,
-    explanation: 'Psilocybin is a naturally occurring hallucinogenic compound found in certain mushroom species, making "Psilocybin" the correct answer.'
+    correctAnswer: 1
   },
   {
     id: '20',
@@ -236,8 +217,7 @@ export const quizData = [
       'Enhanced cognitive function',
       'Better coordination'
     ],
-    correctAnswer: 1,
-    explanation: 'Inhalants can cause sudden sniffing death syndrome, where the heart stops abruptly during or after use, making "Sudden sniffing death syndrome" the correct answer.'
+    correctAnswer: 1
   },
   {
     id: '21',
@@ -248,8 +228,7 @@ export const quizData = [
       'Valium',
       'OxyContin'
     ],
-    correctAnswer: 1,
-    explanation: 'Adderall, a stimulant medication for ADHD, is frequently misused for cognitive enhancement or recreational purposes, making "Adderall" the correct answer.'
+    correctAnswer: 1
   },
   {
     id: '22',
@@ -260,8 +239,7 @@ export const quizData = [
       'Curing drug addiction',
       'Enhancing drug effects'
     ],
-    correctAnswer: 1,
-    explanation: 'Naloxone is a medication used to rapidly reverse opioid overdose by blocking opioid receptors, making "Reversing opioid overdose" the correct answer.'
+    correctAnswer: 1
   },
   {
     id: '23',
@@ -272,8 +250,7 @@ export const quizData = [
       'Improved fertility',
       'Reduced aggression'
     ],
-    correctAnswer: 1,
-    explanation: 'Long-term steroid use can cause serious health problems including heart attacks, liver damage, and infertility, making "Heart attacks and liver damage" the correct answer.'
+    correctAnswer: 1
   },
   {
     id: '24',
@@ -284,8 +261,7 @@ export const quizData = [
       'Opium',
       'Cocaine'
     ],
-    correctAnswer: 1,
-    explanation: 'THC (tetrahydrocannabinol) is the main psychoactive compound in marijuana that produces the "high" sensation, making "THC" the correct answer.'
+    correctAnswer: 1
   },
   {
     id: '25',
@@ -296,8 +272,7 @@ export const quizData = [
       'Alcohol',
       'Prescription opioids'
     ],
-    correctAnswer: 1,
-    explanation: 'PCP (phencyclidine) is notorious for causing severe paranoia, hallucinations, and violent behavior in users, making "PCP" the correct answer.'
+    correctAnswer: 1
   },
   {
     id: '26',
@@ -308,8 +283,7 @@ export const quizData = [
       'Improved cognitive function',
       'Enhanced physical performance'
     ],
-    correctAnswer: 1,
-    explanation: 'Synthetic cannabinoids can cause severe anxiety, psychosis, rapid heart rate, and other dangerous effects unlike natural marijuana, making "Severe anxiety, psychosis, and heart problems" the correct answer.'
+    correctAnswer: 1
   },
   {
     id: '27',
@@ -320,8 +294,7 @@ export const quizData = [
       'Improved appetite',
       'Reduced anxiety'
     ],
-    correctAnswer: 1,
-    explanation: 'Opioid withdrawal typically includes muscle aches, nausea, vomiting, diarrhea, and intense drug cravings, making "Muscle aches and nausea" the correct answer.'
+    correctAnswer: 1
   },
   {
     id: '28',
@@ -332,8 +305,7 @@ export const quizData = [
       'Increase energy and alertness',
       'Relieve pain'
     ],
-    correctAnswer: 1,
-    explanation: 'Hallucinogens primarily alter perception, thoughts, and feelings, often causing users to see or hear things that aren\'t there, making "Alter perception, thoughts, and feelings" the correct answer.'
+    correctAnswer: 1
   },
   {
     id: '29',
@@ -344,8 +316,7 @@ export const quizData = [
       'Methamphetamine',
       'Marijuana'
     ],
-    correctAnswer: 1,
-    explanation: 'Crack is a smokable form of cocaine that produces a rapid, intense high but is extremely addictive, making "Cocaine" the correct answer.'
+    correctAnswer: 1
   },
   {
     id: '30',
@@ -356,8 +327,7 @@ export const quizData = [
       'Enhanced maternal health',
       'Reduced labor pain'
     ],
-    correctAnswer: 1,
-    explanation: 'Drug use during pregnancy can cause birth defects, developmental problems, and neonatal abstinence syndrome in newborns, making "Birth defects and developmental problems" the correct answer.'
+    correctAnswer: 1
   },
   {
     id: '31',
@@ -368,8 +338,7 @@ export const quizData = [
       'Increased energy and alertness',
       'Improved memory function'
     ],
-    correctAnswer: 1,
-    explanation: 'Alcohol poisoning signs include confusion, vomiting, seizures, slow breathing, and unconsciousness requiring immediate medical attention, making "Confusion, vomiting, and unconsciousness" the correct answer.'
+    correctAnswer: 1
   },
   {
     id: '32',
@@ -380,8 +349,7 @@ export const quizData = [
       'Improved cognitive function',
       'Enhanced physical coordination'
     ],
-    correctAnswer: 1,
-    explanation: 'Bath salts can cause extreme paranoia, hallucinations, violent behavior, and dangerous increases in body temperature, making "Extreme paranoia and violent behavior" the correct answer.'
+    correctAnswer: 1
   },
   {
     id: '33',
@@ -392,8 +360,7 @@ export const quizData = [
       'Cocaine',
       'LSD'
     ],
-    correctAnswer: 1,
-    explanation: 'Ketamine is used medically as an anesthetic but is also misused recreationally for its dissociative effects, making "Ketamine" the correct answer.'
+    correctAnswer: 1
   },
   {
     id: '34',
@@ -404,8 +371,7 @@ export const quizData = [
       'Causes hallucinations',
       'Relieves pain'
     ],
-    correctAnswer: 1,
-    explanation: 'Nicotine is a stimulant that increases heart rate, alertness, and releases dopamine in the brain, making "Acts as a stimulant" the correct answer.'
+    correctAnswer: 1
   },
   {
     id: '35',
@@ -416,8 +382,7 @@ export const quizData = [
       'Improved social life',
       'Better communication skills'
     ],
-    correctAnswer: 1,
-    explanation: 'Drug addiction often leads to strained relationships with family and friends, social isolation, and trust issues, making "Strained relationships and isolation" the correct answer.'
+    correctAnswer: 1
   },
   {
     id: '36',
@@ -428,8 +393,7 @@ export const quizData = [
       'Promoting drug legalization',
       'Increasing drug availability'
     ],
-    correctAnswer: 1,
-    explanation: 'Harm reduction focuses on practical strategies to reduce negative consequences associated with drug use, such as needle exchange programs and overdose prevention, making "Strategies to reduce negative consequences of drug use" the correct answer.'
+    correctAnswer: 1
   },
   {
     id: '37',
@@ -440,8 +404,7 @@ export const quizData = [
       'Marijuana',
       'Opium'
     ],
-    correctAnswer: 1,
-    explanation: 'Cocaine is derived from the leaves of the coca plant, native to South America, making "Cocaine" the correct answer.'
+    correctAnswer: 1
   },
   {
     id: '38',
@@ -452,8 +415,7 @@ export const quizData = [
       'Enhanced cognitive abilities',
       'Reduced anxiety permanently'
     ],
-    correctAnswer: 1,
-    explanation: 'Long-term benzodiazepine use can lead to physical dependence and dangerous withdrawal symptoms including seizures, making "Physical dependence and dangerous withdrawal" the correct answer.'
+    correctAnswer: 1
   },
   {
     id: '39',
@@ -464,8 +426,7 @@ export const quizData = [
       'Osmosis through skin',
       'Auditory absorption'
     ],
-    correctAnswer: 1,
-    explanation: 'Common routes of drug administration include oral ingestion, smoking, injection, snorting, and transdermal patches, making "Oral ingestion, smoking, injection" the correct answer.'
+    correctAnswer: 1
   },
   {
     id: '40',
@@ -476,8 +437,7 @@ export const quizData = [
       'Causes hallucinations',
       'Slows down heart rate'
     ],
-    correctAnswer: 1,
-    explanation: 'Caffeine works by blocking adenosine receptors in the brain, leading to increased alertness and reduced fatigue, making "Blocks adenosine receptors in the brain" the correct answer.'
+    correctAnswer: 1
   },
   {
     id: '41',
@@ -488,8 +448,7 @@ export const quizData = [
       'Heroin',
       'Marijuana'
     ],
-    correctAnswer: 1,
-    explanation: 'LSD can cause flashbacks (Hallucinogen Persisting Perception Disorder) where users re-experience effects long after taking the drug, making "LSD" the correct answer.'
+    correctAnswer: 1
   },
   {
     id: '42',
@@ -500,8 +459,7 @@ export const quizData = [
       'Guaranteed safety',
       'Reduced cost'
     ],
-    correctAnswer: 1,
-    explanation: 'Drugs with unknown purity can have unpredictable potency, greatly increasing the risk of accidental overdose, making "Unpredictable potency and risk of overdose" the correct answer.'
+    correctAnswer: 1
   },
   {
     id: '43',
@@ -512,8 +470,7 @@ export const quizData = [
       'Heroin',
       'LSD'
     ],
-    correctAnswer: 1,
-    explanation: 'Synthetic cannabinoids are laboratory-made chemicals designed to mimic THC effects but are often much more dangerous, making "Synthetic cannabinoids" the correct answer.'
+    correctAnswer: 1
   },
   {
     id: '44',
@@ -524,8 +481,7 @@ export const quizData = [
       'Reduced injection pain',
       'Better drug absorption'
     ],
-    correctAnswer: 1,
-    explanation: 'Sharing needles significantly increases the risk of transmitting blood-borne diseases like HIV and hepatitis B and C, making "Transmission of HIV and hepatitis" the correct answer.'
+    correctAnswer: 1
   },
   {
     id: '45',
@@ -536,8 +492,7 @@ export const quizData = [
       'Cocaine',
       'Alcohol'
     ],
-    correctAnswer: 1,
-    explanation: 'PCP can cause users to feel invincible and exhibit superhuman strength, often leading to dangerous behavior and injuries, making "PCP" the correct answer.'
+    correctAnswer: 1
   },
   {
     id: '46',
@@ -548,8 +503,7 @@ export const quizData = [
       'Cause pain as a side effect',
       'Have no effect on pain'
     ],
-    correctAnswer: 1,
-    explanation: 'Opioids work by binding to receptors in the brain and blocking pain signals, providing powerful pain relief, making "Block pain signals in the brain" the correct answer.'
+    correctAnswer: 1
   },
   {
     id: '47',
@@ -560,8 +514,7 @@ export const quizData = [
       'Perfect physical coordination',
       'Ideal body weight'
     ],
-    correctAnswer: 1,
-    explanation: 'Many drugs cause noticeable changes in pupil size - stimulants often dilate pupils while opioids constrict them, making "Dilated or constricted pupils" the correct answer.'
+    correctAnswer: 1
   },
   {
     id: '48',
@@ -572,8 +525,7 @@ export const quizData = [
       'Guaranteed safety',
       'Improved therapeutic effects'
     ],
-    correctAnswer: 1,
-    explanation: 'Combining drugs can lead to unpredictable and dangerous interactions, often multiplying their effects and risks, making "Unpredictable and dangerous interactions" the correct answer.'
+    correctAnswer: 1
   },
   {
     id: '49',
@@ -584,8 +536,7 @@ export const quizData = [
       'Heroin',
       'Marijuana'
     ],
-    correctAnswer: 1,
-    explanation: 'Nitrous oxide is often used recreationally in "whip-its" - small canisters used to inflate whipped cream dispensers, making "Nitrous oxide" the correct answer.'
+    correctAnswer: 1
   },
   {
     id: '50',
@@ -596,16 +547,20 @@ export const quizData = [
       'Teaching how to use drugs safely',
       'Increasing drug availability'
     ],
-    correctAnswer: 1,
-    explanation: 'Drug education programs aim to prevent drug abuse by providing accurate information about risks and consequences, making "Preventing drug abuse through knowledge" the correct answer.'
+    correctAnswer: 1
   }
 ];
 
-// Function to shuffle questions
+// Function to shuffle only questions while keeping answers intact
 export const getShuffledQuestions = () => {
-  const shuffled = [...quizData].sort(() => Math.random() - 0.5);
-  return shuffled.map(question => ({
-    ...question,
-    options: [...question.options].sort(() => Math.random() - 0.5)
-  }));
+  // Create a copy of the quizData array
+  const shuffled = [...quizData];
+  
+  // Fisher-Yates shuffle algorithm for questions only
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  
+  return shuffled;
 };

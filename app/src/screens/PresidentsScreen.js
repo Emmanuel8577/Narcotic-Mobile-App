@@ -1,17 +1,19 @@
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useRef } from 'react';
-import { Animated, Dimensions, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Animated, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Header from '../components/common/Header';
 import PresidentCard from '../components/custom/PresidentCard';
+import ResponsiveContainer from '../components/layout/ResponsiveContainer';
+import ResponsiveGrid from '../components/layout/ResponsiveGrid';
 import { useLanguage } from '../context/LanguageContext';
 import { useTTS } from '../context/TTSContext';
 import { presidentsData } from '../data/presidentsData';
+import { useResponsive } from '../hooks/useResponsive';
 import { theme } from '../styles/theme';
 
-const { width, height } = Dimensions.get('window');
-
 const PresidentsScreen = () => {
+  const { isTablet, scale, responsiveSpacing, moderateScale } = useResponsive();
   const { t, language } = useLanguage();
   const { speak } = useTTS();
   const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -70,20 +72,23 @@ const PresidentsScreen = () => {
         transform: [{ translateY: slideAnim }],
       }}
     >
-      <View style={styles.heroSection}>
+      <View style={[
+        styles.heroSection,
+        { 
+          marginHorizontal: responsiveSpacing.lg,
+          marginBottom: responsiveSpacing.xl,
+          marginTop: responsiveSpacing.xl
+        }
+      ]}>
         <LinearGradient
           colors={['#6366F1', '#8B5CF6', '#7C3AED']}
-          style={styles.heroGradient}
+          style={[
+            styles.heroGradient,
+            { minHeight: isTablet ? 220 : 200 }
+          ]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
         >
-          {/* Background Pattern */}
-          <View style={styles.heroPattern}>
-            <View style={[styles.patternCircle, styles.patternCircle1]} />
-            <View style={[styles.patternCircle, styles.patternCircle2]} />
-            <View style={[styles.patternCircle, styles.patternCircle3]} />
-          </View>
-
           <View style={styles.heroContent}>
             {/* Main Content - Full width for text */}
             <View style={styles.heroMainContent}>
@@ -92,44 +97,77 @@ const PresidentsScreen = () => {
                 <View style={styles.titleContainer}>
                   <View style={styles.titleRow}>
                     <View style={styles.heroIconContainer}>
-                      <Ionicons name="people" size={32} color="#FFFFFF" />
+                      <Ionicons name="people" size={isTablet ? scale(36) : scale(32)} color="#FFFFFF" />
                       <View style={styles.iconBadge}>
-                        <Text style={styles.iconBadgeText}>{safePresidentsData.length}</Text>
+                        <Text style={[
+                          styles.iconBadgeText,
+                          { fontSize: scale(10) }
+                        ]}>{safePresidentsData.length}</Text>
                       </View>
                     </View>
                     {/* Title removed from hero section - only in Header */}
                   </View>
                   
                   {/* Only subtitle displayed in hero section */}
-                  <Text style={styles.heroSubtitle}>
+                  <Text style={[
+                    styles.heroSubtitle,
+                    { fontSize: isTablet ? scale(17) : scale(16) }
+                  ]}>
                     {heroSubtitle}
                   </Text>
                 </View>
 
                 {/* Stats Section */}
-                <View style={styles.heroStats}>
+                <View style={[
+                  styles.heroStats,
+                  { padding: responsiveSpacing.md }
+                ]}>
                   <View style={styles.statItem}>
-                    <Text style={styles.statNumber}>{safePresidentsData.length}</Text>
-                    <Text style={styles.statLabel}>Leaders</Text>
+                    <Text style={[
+                      styles.statNumber,
+                      { fontSize: isTablet ? scale(20) : scale(18) }
+                    ]}>{safePresidentsData.length}</Text>
+                    <Text style={[
+                      styles.statLabel,
+                      { fontSize: scale(11) }
+                    ]}>Leaders</Text>
                   </View>
                   <View style={styles.statDivider} />
                   <View style={styles.statItem}>
-                    <Text style={styles.statNumber}>
+                    <Text style={[
+                      styles.statNumber,
+                      { fontSize: isTablet ? scale(20) : scale(18) }
+                    ]}>
                       {safePresidentsData.reduce((sum, president) => sum + (president.achievements || 0), 0)}
                     </Text>
-                    <Text style={styles.statLabel}>Achievements</Text>
+                    <Text style={[
+                      styles.statLabel,
+                      { fontSize: scale(11) }
+                    ]}>Achievements</Text>
                   </View>
                   <View style={styles.statDivider} />
                   <View style={styles.statItem}>
-                    <Text style={styles.statNumber}>10+</Text>
-                    <Text style={styles.statLabel}>Schools</Text>
+                    <Text style={[
+                      styles.statNumber,
+                      { fontSize: isTablet ? scale(20) : scale(18) }
+                    ]}>10+</Text>
+                    <Text style={[
+                      styles.statLabel,
+                      { fontSize: scale(11) }
+                    ]}>Schools</Text>
                   </View>
                 </View>
               </View>
 
               {/* Audio Button - Icon only */}
               <TouchableOpacity 
-                style={styles.audioButton}
+                style={[
+                  styles.audioButton,
+                  { 
+                    width: isTablet ? scale(60) : scale(50),
+                    height: isTablet ? scale(60) : scale(50)
+                  }
+                ]}
                 onPress={handlePlayScreenAudio}
                 activeOpacity={0.8}
               >
@@ -139,16 +177,10 @@ const PresidentsScreen = () => {
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 1 }}
                 >
-                  <Ionicons name="volume-high" size={24} color="#FFFFFF" />
+                  <Ionicons name="volume-high" size={isTablet ? scale(28) : scale(24)} color="#FFFFFF" />
                 </LinearGradient>
               </TouchableOpacity>
             </View>
-          </View>
-
-          {/* Bottom Wave Decoration */}
-          <View style={styles.waveDecoration}>
-            <View style={styles.wave} />
-            <View style={[styles.wave, styles.wave2]} />
           </View>
         </LinearGradient>
       </View>
@@ -174,9 +206,7 @@ const PresidentsScreen = () => {
           ],
         }}
       >
-        <PresidentCard 
-          president={item}
-        />
+        <PresidentCard president={item} />
       </Animated.View>
     );
   };
@@ -214,21 +244,35 @@ const PresidentsScreen = () => {
         subtitle="" // Empty subtitle since it's in the hero section
       />
       
-      <FlatList
-        data={data}
-        renderItem={renderItem}
-        keyExtractor={keyExtractor}
-        contentContainerStyle={styles.listContainer}
-        showsVerticalScrollIndicator={false}
-        style={styles.list}
-        ListEmptyComponent={
-          <View style={styles.emptyState}>
-            <Text style={styles.emptyText}>
-              {safeTranslate('presidents.noPresidents', 'No presidents data available')}
-            </Text>
-          </View>
-        }
-      />
+      {isTablet ? (
+        <ResponsiveContainer scrollable={true}>
+          {renderHeroSection()}
+          <ResponsiveGrid columns={2} spacing="lg">
+            {safePresidentsData.map((president, index) => (
+              <PresidentCard key={president.id || index} president={president} />
+            ))}
+          </ResponsiveGrid>
+        </ResponsiveContainer>
+      ) : (
+        <FlatList
+          data={data}
+          renderItem={renderItem}
+          keyExtractor={keyExtractor}
+          contentContainerStyle={styles.listContainer}
+          showsVerticalScrollIndicator={false}
+          style={styles.list}
+          ListEmptyComponent={
+            <View style={styles.emptyState}>
+              <Text style={[
+                styles.emptyText,
+                { fontSize: scale(16) }
+              ]}>
+                {safeTranslate('presidents.noPresidents', 'No presidents data available')}
+              </Text>
+            </View>
+          }
+        />
+      )}
     </Animated.View>
   );
 };
@@ -239,10 +283,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.background || '#F9FAFB',
   },
   heroSection: {
-    marginHorizontal: theme.spacing.lg || 16,
-    marginBottom: theme.spacing.xl || 24,
-    marginTop: theme.spacing.xl || 24,
-    borderRadius: theme.borderRadius.xl || 20,
+    borderRadius: theme.borderRadius.xl,
     overflow: 'hidden',
     shadowColor: '#6366F1',
     shadowOffset: { width: 0, height: 12 },
@@ -251,39 +292,8 @@ const styles = StyleSheet.create({
     elevation: 12,
   },
   heroGradient: {
-    padding: theme.spacing.xl || 24,
-    minHeight: 200, // Increased to accommodate the longer subtitle
+    padding: theme.spacing.xl,
     justifyContent: 'center',
-  },
-  heroPattern: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-  },
-  patternCircle: {
-    position: 'absolute',
-    borderRadius: 999,
-    backgroundColor: 'rgba(255,255,255,0.05)',
-  },
-  patternCircle1: {
-    width: 120,
-    height: 120,
-    top: -40,
-    right: -40,
-  },
-  patternCircle2: {
-    width: 80,
-    height: 80,
-    bottom: -20,
-    left: -20,
-  },
-  patternCircle3: {
-    width: 60,
-    height: 60,
-    top: '50%',
-    right: 40,
   },
   heroContent: {
     width: '100%',
@@ -296,21 +306,21 @@ const styles = StyleSheet.create({
   },
   heroTextContent: {
     flex: 1,
-    marginRight: theme.spacing.md || 12,
+    marginRight: theme.spacing.md,
   },
   titleContainer: {
     width: '100%',
-    marginBottom: theme.spacing.lg || 16,
+    marginBottom: theme.spacing.lg,
   },
   titleRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: theme.spacing.md || 12,
+    marginBottom: theme.spacing.md,
     flexWrap: 'wrap',
   },
   heroIconContainer: {
     position: 'relative',
-    marginRight: theme.spacing.md || 12,
+    marginRight: theme.spacing.md,
     flexShrink: 0,
   },
   iconBadge: {
@@ -328,11 +338,9 @@ const styles = StyleSheet.create({
   },
   iconBadgeText: {
     color: '#FFFFFF',
-    fontSize: 10,
     fontWeight: '800',
   },
   heroSubtitle: {
-    fontSize: 16,
     color: 'rgba(255,255,255,0.9)',
     lineHeight: 22,
     fontWeight: '500',
@@ -344,10 +352,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: 'rgba(255,255,255,0.15)',
-    borderRadius: theme.borderRadius.lg || 12,
-    padding: theme.spacing.md || 12,
+    borderRadius: theme.borderRadius.lg,
     alignSelf: 'flex-start',
-    marginTop: theme.spacing.lg || 16,
+    marginTop: theme.spacing.lg,
   },
   statItem: {
     alignItems: 'center',
@@ -355,13 +362,11 @@ const styles = StyleSheet.create({
     minWidth: 60,
   },
   statNumber: {
-    fontSize: 18,
     fontWeight: '800',
     color: '#FFFFFF',
     marginBottom: 2,
   },
   statLabel: {
-    fontSize: 11,
     color: 'rgba(255,255,255,0.8)',
     fontWeight: '600',
     textTransform: 'uppercase',
@@ -372,45 +377,23 @@ const styles = StyleSheet.create({
     width: 1,
     height: 30,
     backgroundColor: 'rgba(255,255,255,0.3)',
-    marginHorizontal: theme.spacing.sm || 8,
+    marginHorizontal: theme.spacing.sm,
   },
   audioButton: {
-    borderRadius: theme.borderRadius.lg || 12,
+    borderRadius: theme.borderRadius.lg,
     overflow: 'hidden',
     flexShrink: 0,
     alignSelf: 'flex-start',
     marginTop: 4,
   },
   audioButtonGradient: {
-    width: 50,
-    height: 50,
+    width: '100%',
+    height: '100%',
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: theme.borderRadius.lg || 12,
+    borderRadius: theme.borderRadius.lg,
     borderWidth: 1,
     borderColor: 'rgba(255,255,255,0.3)',
-  },
-  waveDecoration: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    height: 20,
-  },
-  wave: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    height: 10,
-    backgroundColor: 'rgba(255,255,255,0.1)',
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-  },
-  wave2: {
-    bottom: -5,
-    backgroundColor: 'rgba(255,255,255,0.05)',
-    height: 15,
   },
   list: {
     flex: 1,
@@ -425,7 +408,6 @@ const styles = StyleSheet.create({
     padding: 40,
   },
   emptyText: {
-    fontSize: 16,
     color: theme.colors.textSecondary || '#6B7280',
     textAlign: 'center',
   },

@@ -1,7 +1,6 @@
 import React, { useRef, useState } from "react";
 import {
   Animated,
-  Dimensions,
   FlatList,
   ScrollView,
   StyleSheet,
@@ -11,13 +10,15 @@ import {
 } from "react-native";
 import Header from "../components/common/Header";
 import DrugCard from "../components/custom/DrugCard";
+import ResponsiveContainer from '../components/layout/ResponsiveContainer';
+import ResponsiveGrid from '../components/layout/ResponsiveGrid';
 import { useLanguage } from "../context/LanguageContext";
 import { useTTS } from "../context/TTSContext";
+import { useResponsive } from '../hooks/useResponsive';
 import { theme } from "../styles/theme";
 
-const { width } = Dimensions.get("window");
-
 const EducationScreen = ({ navigation }) => {
+  const { isTablet, scale, responsiveSpacing, moderateScale } = useResponsive();
   const { t, language, drugData } = useLanguage();
   const { speak } = useTTS();
   const [selectedCategory, setSelectedCategory] = useState("all");
@@ -72,8 +73,6 @@ const EducationScreen = ({ navigation }) => {
       navigation.navigate("DrugDetailScreen", { drug });
     }
   };
-
-  const { testTTS } = useTTS();
 
   // Generate screen text for header TTS
   const getScreenText = () => {
@@ -160,18 +159,27 @@ const EducationScreen = ({ navigation }) => {
   };
 
   return (
-    <Animated.View style={[styles.container, { opacity: fadeAnim }]}>
+    <View style={styles.container}>
       <Header
         title={t("education.title")}
         subtitle={t("education.subtitle")}
         audioText={getScreenText()}
       />
 
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+      <ResponsiveContainer scrollable={true} style={styles.contentContainer}>
         {/* Categories Section */}
-        <View style={styles.categoriesCard}>
+        <View style={[
+          styles.categoriesCard,
+          { 
+            padding: responsiveSpacing.lg,
+            marginBottom: responsiveSpacing.xl
+          }
+        ]}>
           <View style={styles.categoriesHeader}>
-            <Text style={styles.categoriesTitle}>{t("common.categories")}</Text>
+            <Text style={[
+              styles.categoriesTitle,
+              { fontSize: isTablet ? moderateScale(20) : moderateScale(18) }
+            ]}>{t("common.categories")}</Text>
           </View>
 
           <ScrollView
@@ -185,7 +193,10 @@ const EducationScreen = ({ navigation }) => {
 
         {/* Results Count */}
         <View style={styles.resultsContainer}>
-          <Text style={styles.resultsText}>
+          <Text style={[
+            styles.resultsText,
+            { fontSize: moderateScale(14) }
+          ]}>
             {filteredDrugs.length}{" "}
             {filteredDrugs.length === 1
               ? t("common.substance")
@@ -195,31 +206,56 @@ const EducationScreen = ({ navigation }) => {
           <View style={styles.resultsDivider} />
         </View>
 
-        {/* Drugs List */}
-        <FlatList
-          data={filteredDrugs}
-          renderItem={renderDrugItem}
-          keyExtractor={(item, index) => {
-            // Safe key extraction with multiple fallbacks
-            if (item?.id) return String(item.id);
-            if (item?.name) return item.name;
-            return `drug-${index}`;
-          }}
-          scrollEnabled={false}
-          contentContainerStyle={styles.listContainer}
-          showsVerticalScrollIndicator={false}
-          ListEmptyComponent={
-            <View style={styles.emptyContainer}>
-              <Text style={styles.emptyText}>
-                No drugs found in this category
-              </Text>
-            </View>
-          }
-        />
-
-        <View style={styles.bottomSpacer} />
-      </ScrollView>
-    </Animated.View>
+        {/* Drugs List with bottom spacing */}
+        {isTablet ? (
+          <View style={styles.bottomSpacing}>
+            <ResponsiveGrid columns={2} spacing="lg">
+              {filteredDrugs.map((item, index) => (
+                <Animated.View
+                  key={item?.id || index}
+                  style={{
+                    opacity: fadeAnim,
+                    transform: [
+                      {
+                        translateY: slideAnim.interpolate({
+                          inputRange: [0, 1],
+                          outputRange: [0, -20 * index],
+                        }),
+                      },
+                    ],
+                  }}
+                >
+                  <DrugCard drug={item} onPress={() => handleDrugCardPress(item)} />
+                </Animated.View>
+              ))}
+            </ResponsiveGrid>
+          </View>
+        ) : (
+          <FlatList
+            data={filteredDrugs}
+            renderItem={renderDrugItem}
+            keyExtractor={(item, index) => {
+              if (item?.id) return String(item.id);
+              if (item?.name) return item.name;
+              return `drug-${index}`;
+            }}
+            scrollEnabled={false}
+            contentContainerStyle={[styles.listContainer, styles.bottomSpacing]}
+            showsVerticalScrollIndicator={false}
+            ListEmptyComponent={
+              <View style={styles.emptyContainer}>
+                <Text style={[
+                  styles.emptyText,
+                  { fontSize: moderateScale(16) }
+                ]}>
+                  No drugs found in this category
+                </Text>
+              </View>
+            }
+          />
+        )}
+      </ResponsiveContainer>
+    </View>
   );
 };
 
@@ -228,16 +264,16 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: theme.colors.background,
   },
-  content: {
+  contentContainer: {
     flex: 1,
-    padding: theme.spacing.lg,
-    paddingTop: theme.spacing.md,
+  },
+  bottomSpacing: {
+    marginBottom: theme.spacing.xxl,
+    paddingBottom: theme.spacing.xl,
   },
   categoriesCard: {
-    marginBottom: theme.spacing.xl,
     borderRadius: theme.borderRadius.lg,
     backgroundColor: theme.colors.white,
-    padding: theme.spacing.lg,
     ...theme.shadows.md,
   },
   categoriesHeader: {
@@ -247,9 +283,9 @@ const styles = StyleSheet.create({
     marginBottom: theme.spacing.lg,
   },
   categoriesTitle: {
-    ...theme.typography.h3,
     color: theme.colors.text,
     flex: 1,
+    fontWeight: '600',
   },
   categoriesContainer: {
     paddingHorizontal: theme.spacing.xs,
@@ -277,7 +313,6 @@ const styles = StyleSheet.create({
     marginRight: theme.spacing.sm,
   },
   categoryText: {
-    ...theme.typography.bodySmall,
     fontWeight: "600",
     color: theme.colors.textSecondary,
   },
@@ -291,7 +326,6 @@ const styles = StyleSheet.create({
     marginBottom: theme.spacing.lg,
   },
   resultsText: {
-    ...theme.typography.bodySmall,
     color: theme.colors.textSecondary,
     fontWeight: "600",
     marginRight: theme.spacing.md,
@@ -309,11 +343,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   emptyText: {
-    ...theme.typography.body,
     color: theme.colors.textSecondary,
-  },
-  bottomSpacer: {
-    height: 100,
   },
 });
 

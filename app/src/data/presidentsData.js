@@ -109,8 +109,8 @@ export const presidentsData = [
   },
   {
     id: '10',
-    name: 'Sarafina Hyeladi',
-    school: 'Yerwa government girls college',
+    name: 'Martha Offor',
+    school: 'Unimaid Demonstration Secondary school',
     role: 'President Drug Free Club',
     tenure: '2025-til date',
     achievements: 15,

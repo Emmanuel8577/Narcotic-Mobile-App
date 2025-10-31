@@ -1,3 +1,4 @@
+// App.js
 import { registerRootComponent } from 'expo';
 import { useEffect } from 'react';
 import { LogBox, Platform, UIManager } from 'react-native';
@@ -28,14 +29,12 @@ function NavigationBarManager() {
           const { NavigationBar } = require('expo-navigation-bar');
           
           if (NavigationBar) {
-            // Use Promise.all to set all properties at once
             await Promise.all([
               NavigationBar.setVisibilityAsync("hidden"),
               NavigationBar.setBehaviorAsync("inset-touch"),
               NavigationBar.setPositionAsync("absolute"),
               NavigationBar.setBackgroundColorAsync("#00000000")
             ]);
-            console.log('Navigation bar hidden successfully');
           }
         } catch (error) {
           console.log('Navigation bar customization not available');
@@ -44,8 +43,6 @@ function NavigationBarManager() {
     };
 
     hideNavigationBar();
-
-    // Cleaner interval management
     const interval = setInterval(hideNavigationBar, 2000);
 
     return () => clearInterval(interval);

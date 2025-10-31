@@ -1,5 +1,5 @@
 export const quizData = [
-  {
+   {
     id: '1',
     question: 'Wanne daga cikin waɗannan shine tasirin gama-gari na amfani da cocaine?',
     options: [
@@ -8,8 +8,7 @@ export const quizData = [
       'Ingantaccen ƙwaƙwalwar ajiya',
       'Rage tashin hankali'
     ],
-    correctAnswer: 1,
-    explanation: 'Cocaine maganin ƙarfafawa ne wanda ke ƙara kuzari, fahimi, da bugun zuciya, wanda ya sa "Ƙaruwar kuzari da fahimi" shine amsar daidai.'
+    correctAnswer: 1
   },
   {
     id: '2',
@@ -20,8 +19,7 @@ export const quizData = [
       'Ingantaccen aikin fahimi',
       'Mafi kyawun tsarin barci'
     ],
-    correctAnswer: 1,
-    explanation: 'Amfani da heroin yana ɗauke da babban haɗarin yawan shan magani na mutuwa saboda rashin numfashi, wanda ya sa "Yawan shan magani na mutuwa" shine amsar daidai.'
+    correctAnswer: 1
   },
   {
     id: '3',
@@ -32,8 +30,7 @@ export const quizData = [
       'Huhu',
       'Koda'
     ],
-    correctAnswer: 1,
-    explanation: 'Hanta ita ce ke da alhakin narkar da barasa kuma ta fi shafa ta hanyar cin zarafi na dogon lokaci, wanda ya sa "Hanta" shine amsar daidai.'
+    correctAnswer: 1
   },
   {
     id: '4',
@@ -44,8 +41,7 @@ export const quizData = [
       'Sakawa alhakin',
       'Mafi kyawun lafiyar jiki'
     ],
-    correctAnswer: 2,
-    explanation: 'Sakawa alhakin alama ce ta gama-gari ta halayen jaraba, wanda ya sa "Sakawa alhakin" shine amsar daidai.'
+    correctAnswer: 2
   },
   {
     id: '5',
@@ -56,8 +52,7 @@ export const quizData = [
       'Cocaine',
       'Heroin'
     ],
-    correctAnswer: 1,
-    explanation: 'Methamphetamine yana haifar da matsalolin haƙori masu tsanani da aka sani da "bakin meth" saboda bushewar baki, niƙa haƙora, da rashin tsabtar jiki, wanda ya sa "Methamphetamine" shine amsar daidai.'
+    correctAnswer: 1
   },
   {
     id: '6',
@@ -68,8 +63,7 @@ export const quizData = [
       'Haifar da hangen nesa',
       'Haɓaka fahimtar hankali'
     ],
-    correctAnswer: 1,
-    explanation: 'Masu kashe kuzari suna rage aikin kwakwalwa da aikin tsakiyar tsarin juyayi, wanda ya sa "Rage aikin kwakwalwa" shine amsar daidai.'
+    correctAnswer: 1
   },
   {
     id: '7',
@@ -80,8 +74,7 @@ export const quizData = [
       'Codeine',
       'Oxycodone'
     ],
-    correctAnswer: 1,
-    explanation: 'Fentanyl opioid ne na roba mai matuƙar ƙarfi wanda yake da ƙarfi sau 50-100 fiye da morphine, wanda ya sa "Fentanyl" shine amsar daidai.'
+    correctAnswer: 1
   },
   {
     id: '8',
@@ -92,8 +85,7 @@ export const quizData = [
       'Ingantaccen aikin ƙwaƙwalwar ajiya',
       'Rage bugun zuciya'
     ],
-    correctAnswer: 1,
-    explanation: 'MDMA na iya haifar da mummunan rashin ruwa da hauhawar yanayin jiki mai haɗari, wanda ke haifar da bugun zafi, wanda ya sa "Mummunan rashin ruwa da bugun zafi" shine amsar daidai.'
+    correctAnswer: 1
   },
   {
     id: '9',
@@ -104,8 +96,7 @@ export const quizData = [
       'Heroin',
       'LSD'
     ],
-    correctAnswer: 2,
-    explanation: 'An samo heroin daga morphine, wanda ya fito daga shukar opium poppy, wanda ya sa "Heroin" shine amsar daidai.'
+    correctAnswer: 2
   },
   {
     id: '10',
@@ -116,8 +107,7 @@ export const quizData = [
       'Ƙara kuzari',
       'Rage zazzabi'
     ],
-    correctAnswer: 1,
-    explanation: 'Ana amfani da benzodiazepines da farko don magance cututtukan tashin hankali da rashin barci, wanda ya sa "Magance damuwa da rashin barci" shine amsar daidai.'
+    correctAnswer: 1
   },
   {
     id: '11',
@@ -128,8 +118,7 @@ export const quizData = [
       'Ingantaccen aikin ƙwaƙwalwar ajiya',
       'Mafi kyawun aikin karatu'
     ],
-    correctAnswer: 1,
-    explanation: 'Amfani da marijuana a lokacin samartaka na iya lalata ci gaban kwakwalwa kuma ya shafi ƙwaƙwalwar ajiya da koyo, wanda ya sa "Rashin ci gaban kwakwalwa" shine amsar daidai.'
+    correctAnswer: 1
   },
   {
     id: '12',
@@ -140,8 +129,7 @@ export const quizData = [
       'Tsarin zama jaraba',
       'Hanyar ba da magunguna'
     ],
-    correctAnswer: 1,
-    explanation: 'Ciwon janyewa yana nufin alamomin jiki da na hankali waɗanda ke faruwa lokacin da mutum mai dogaro ya daina amfani da magani, wanda ya sa "Alamomin jiki da na hankali lokacin dakatar da amfani da magani" shine amsar daidai.'
+    correctAnswer: 1
   },
   {
     id: '13',
@@ -152,8 +140,7 @@ export const quizData = [
       'PCP',
       'Ketamine'
     ],
-    correctAnswer: 1,
-    explanation: 'LSD ana kiranta da "acid" kuma maganin ruɗi ne mai ƙarfi, wanda ya sa "LSD" shine amsar daidai.'
+    correctAnswer: 1
   },
   {
     id: '14',
@@ -164,8 +151,7 @@ export const quizData = [
       'Rashin numfashi da yawan shan magani',
       'Ingantaccen haɗin kai'
     ],
-    correctAnswer: 2,
-    explanation: 'Haɗa barasa da sauran masu kashe kuzari na iya haifar da mummunan rashin numfashi, wanda ke haifar da koma ko mutuwa, wanda ya sa "Rashin numfashi da yawan shan magani" shine amsar daidai.'
+    correctAnswer: 2
   },
   {
     id: '15',
@@ -176,8 +162,7 @@ export const quizData = [
       'Heroin',
       'MDMA'
     ],
-    correctAnswer: 1,
-    explanation: 'Ketamine maganin sa barci ne mai rarrabuwa wanda zai iya sa masu amfani su ji an raba su da jikinsu da muhallinsu, wanda ya sa "Ketamine" shine amsar daidai.'
+    correctAnswer: 1
   },
   {
     id: '16',
@@ -188,8 +173,7 @@ export const quizData = [
       'Ƙarfin jurewa illolin gefen magani',
       'Izini na doka don amfani da magunguna'
     ],
-    correctAnswer: 1,
-    explanation: 'Jurewa yana faruwa lokacin da mutum yana buƙatar ɗaukar manyan allurai na magani don cimma tasirin da ya fara samu, wanda ya sa "Bukatar manyan allurai don cimma tasiri ɗaya" shine amsar daidai.'
+    correctAnswer: 1
   },
   {
     id: '17',
@@ -200,8 +184,7 @@ export const quizData = [
       'Marijuana',
       'LSD'
     ],
-    correctAnswer: 1,
-    explanation: 'GHB sau da yawa ana haɗa shi da lalatar jima\'i ta hanyar magani saboda tasirinsa na kwantar da hankali da rashin ƙwaƙwalwar ajiya, wanda ya sa "GHB" shine amsar daidai.'
+    correctAnswer: 1
   },
   {
     id: '18',
@@ -212,8 +195,7 @@ export const quizData = [
       'Haifar da hangen nesa',
       'Haifar da barci'
     ],
-    correctAnswer: 1,
-    explanation: 'Masu ƙarfafawa suna ƙara aiki a cikin tsakiyar tsarin juyayi, wanda ke haifar da ƙaruwar kuzari, fahimi, da bugun zuciya, wanda ya sa "Ƙara aiki a cikin tsakiyar tsarin juyayi" shine amsar daidai.'
+    correctAnswer: 1
   },
   {
     id: '19',
@@ -224,8 +206,7 @@ export const quizData = [
       'PCP',
       'DMT'
     ],
-    correctAnswer: 1,
-    explanation: 'Psilocybin wani abu ne na ruɗi na halitta da ake samu a cikin wasu nau\'in naman kaza, wanda ya sa "Psilocybin" shine amsar daidai.'
+    correctAnswer: 1
   },
   {
     id: '20',
@@ -236,8 +217,7 @@ export const quizData = [
       'Ingantaccen aikin fahimi',
       'Mafi kyawun haɗin kai'
     ],
-    correctAnswer: 1,
-    explanation: 'Abubuwan shan iska na iya haifar da ciwon shan iska na kwatsam, inda zuciya ta tsaya ba zato ba tsammani yayin amfani ko bayansa, wanda ya sa "Ciwon shan iska na kwatsam" shine amsar daidai.'
+    correctAnswer: 1
   },
   {
     id: '21',
@@ -248,8 +228,7 @@ export const quizData = [
       'Valium',
       'OxyContin'
     ],
-    correctAnswer: 1,
-    explanation: 'Adderall, maganin ƙarfafawa don ADHD, ana yawan amfani da shi mara kyau don haɓaka fahimi ko dalilai na nishaɗi, wanda ya sa "Adderall" shine amsar daidai.'
+    correctAnswer: 1
   },
   {
     id: '22',
@@ -260,8 +239,7 @@ export const quizData = [
       'Warkar da jarabar magani',
       'Haɓaka tasirin magani'
     ],
-    correctAnswer: 1,
-    explanation: 'Naloxone magani ne da ake amfani dashi don juyar da yawan shan maganin opioid cikin sauri ta hanyar toshe masu karɓar opioid, wanda ya sa "Juyar da yawan shan maganin opioid" shine amsar daidai.'
+    correctAnswer: 1
   },
   {
     id: '23',
@@ -272,8 +250,7 @@ export const quizData = [
       'Ingantaccen haihuwa',
       'Rage tashin hankali'
     ],
-    correctAnswer: 1,
-    explanation: 'Amfani da steroid na dogon lokaci na iya haifar da matsalolin kiwon lafiya masu mahimmanci ciki har da harbin zuciya, lalacewar hanta, da rashin haihuwa, wanda ya sa "Harbin zuciya da lalacewar hanta" shine amsar daidai.'
+    correctAnswer: 1
   },
   {
     id: '24',
@@ -284,8 +261,7 @@ export const quizData = [
       'Opium',
       'Cocaine'
     ],
-    correctAnswer: 1,
-    explanation: 'THC (tetrahydrocannabinol) shine babban abin da ke shafar hankali a cikin marijuana wanda ke samar da jin daɗin "buguwa", wanda ya sa "THC" shine amsar daidai.'
+    correctAnswer: 1
   },
   {
     id: '25',
@@ -296,8 +272,7 @@ export const quizData = [
       'Barasa',
       'Magungunan opioid na magani'
     ],
-    correctAnswer: 1,
-    explanation: 'PCP (phencyclidine) sananne ne don haifar da tsoro mai tsanani, hangen nesa, da halayen tashin hankali a cikin masu amfani, wanda ya sa "PCP" shine amsar daidai.'
+    correctAnswer: 1
   },
   {
     id: '26',
@@ -308,8 +283,7 @@ export const quizData = [
       'Ingantaccen aikin fahimi',
       'Ingantaccen aikin jiki'
     ],
-    correctAnswer: 1,
-    explanation: 'Cannabinoids na roba na iya haifar da matsanancin tashin hankali, hauka, saurin bugun zuciya, da sauran illolin haɗari sabanin marijuana na halitta, wanda ya sa "Matsananin tashin hankali, hauka, da matsalolin zuciya" shine amsar daidai.'
+    correctAnswer: 1
   },
   {
     id: '27',
@@ -320,8 +294,7 @@ export const quizData = [
       'Ingantaccen ci',
       'Rage tashin hankali'
     ],
-    correctAnswer: 1,
-    explanation: 'Janyewar opioid yawanci ya haɗa da ciwon tsoka, tashin zuciya, amai, zawo, da ƙwaƙƙwaran maganin ƙwaƙƙwaran, wanda ya sa "Ciwon tsoka da tashin zuciya" shine amsar daidai.'
+    correctAnswer: 1
   },
   {
     id: '28',
@@ -332,8 +305,7 @@ export const quizData = [
       'Ƙara kuzari da fahimi',
       'Magance ciwo'
     ],
-    correctAnswer: 1,
-    explanation: 'Masu ruɗi da farko suna canza fahimta, tunani, da ji, sau da yawa suna sa masu amfani su ga ko ji abubuwan da ba su nan, wanda ya sa "Canza fahimta, tunani, da ji" shine amsar daidai.'
+    correctAnswer: 1
   },
   {
     id: '29',
@@ -344,8 +316,7 @@ export const quizData = [
       'Methamphetamine',
       'Marijuana'
     ],
-    correctAnswer: 1,
-    explanation: 'Faɗa wani nau\'in cocaine ne mai shan taba wanda ke haifar da babban bugu mai sauri amma yana da matuƙar saukin kamuwa, wanda ya sa "Cocaine" shine amsar daidai.'
+    correctAnswer: 1
   },
   {
     id: '30',
@@ -356,8 +327,7 @@ export const quizData = [
       'Ingantaccen lafiyar uwa',
       'Rage ciwon haihuwa'
     ],
-    correctAnswer: 1,
-    explanation: 'Amfani da magunguna yayin daukar ciki na iya haifar da nakasu, matsalolin ci gaba, da ciwon janyewar jarirai a cikin jariran da aka haifa, wanda ya sa "Nakasu da matsalolin ci gaba" shine amsar daidai.'
+    correctAnswer: 1
   },
   {
     id: '31',
@@ -368,8 +338,7 @@ export const quizData = [
       'Ƙaruwar kuzari da fahimi',
       'Ingantaccen aikin ƙwaƙwalwar ajiya'
     ],
-    correctAnswer: 1,
-    explanation: 'Alamun guba na barasa sun haɗa da rudani, amai, kamewa, jinkirin numfashi, da suma waɗanda ke buƙatar taimakon likita nan take, wanda ya sa "Rudani, amai, da suma" shine amsar daidai.'
+    correctAnswer: 1
   },
   {
     id: '32',
@@ -380,8 +349,7 @@ export const quizData = [
       'Ingantaccen aikin fahimi',
       'Ingantaccen haɗin kai na jiki'
     ],
-    correctAnswer: 1,
-    explanation: 'Gishirin wanka na iya haifar da matsanancin tsoro, hangen nesa, halayen tashin hankali, da hauhawar yanayin jiki mai haɗari, wanda ya sa "Matsananin tsoro da halayen tashin hankali" shine amsar daidai.'
+    correctAnswer: 1
   },
   {
     id: '33',
@@ -392,8 +360,7 @@ export const quizData = [
       'Cocaine',
       'LSD'
     ],
-    correctAnswer: 1,
-    explanation: 'Ketamine ana amfani dashi a likita azaman maganin sa barci amma kuma ana amfani dashi mara kyau don nishaɗi saboda tasirinsa na rarrabuwa, wanda ya sa "Ketamine" shine amsar daidai.'
+    correctAnswer: 1
   },
   {
     id: '34',
@@ -404,8 +371,7 @@ export const quizData = [
       'Yana haifar da hangen nesa',
       'Yana magance ciwo'
     ],
-    correctAnswer: 1,
-    explanation: 'Nicotine maganin ƙarfafawa ne wanda ke ƙara bugun zuciya, fahimi, da sakin dopamine a cikin kwakwalwa, wanda ya sa "Yana aiki azaman mai ƙarfafawa" shine amsar daidai.'
+    correctAnswer: 1
   },
   {
     id: '35',
@@ -416,8 +382,7 @@ export const quizData = [
       'Ingantaccen rayuwar zamantakewa',
       'Mafi kyawun ƙwarewar sadarwa'
     ],
-    correctAnswer: 1,
-    explanation: 'Jarabar magani sau da yawa tana haifar da matsalolin dangantaka tare da iyali da abokai, warewar zamantakewa, da matsalolin amincewa, wanda ya sa "Matsalolin dangantaka da warewa" shine amsar daidai.'
+    correctAnswer: 1
   },
   {
     id: '36',
@@ -428,8 +393,7 @@ export const quizData = [
       'Ƙarfafa halastar magani',
       'Ƙara samun magunguna'
     ],
-    correctAnswer: 1,
-    explanation: 'Rage cutarwa yana mai da hankali kan dabarun aiki don rage mummunan sakamakon da ke tattare da amfani da magani, kamar shirin musanya allura da rigakafin yawan shan magani, wanda ya sa "Dabarun rage mummunan sakamakon amfani da magani" shine amsar daidai.'
+    correctAnswer: 1
   },
   {
     id: '37',
@@ -440,8 +404,7 @@ export const quizData = [
       'Marijuana',
       'Opium'
     ],
-    correctAnswer: 1,
-    explanation: 'An samo cocaine daga ganyen shukar coca, \'yan asalin Kudancin Amurka, wanda ya sa "Cocaine" shine amsar daidai.'
+    correctAnswer: 1
   },
   {
     id: '38',
@@ -452,8 +415,7 @@ export const quizData = [
       'Ingantattun iyawar fahimi',
       'Rage tashin hankali na dindindin'
     ],
-    correctAnswer: 1,
-    explanation: 'Amfani da benzodiazepine na dogon lokaci na iya haifar da dogaro na jiki da alamun janyewa masu haɗari ciki har da kamewa, wanda ya sa "Dogaro na jiki da janyewa mai haɗari" shine amsar daidai.'
+    correctAnswer: 1
   },
   {
     id: '39',
@@ -464,8 +426,7 @@ export const quizData = [
       'Osmosis ta cikin fata',
       'Sha ta hanyar ji'
     ],
-    correctAnswer: 1,
-    explanation: 'Hanyoyin gudanar da magunguna na gama-gari sun haɗa da shan baki, shan taba, allura, shan iska, da facin fata, wanda ya sa "Shan baki, shan taba, allura" shine amsar daidai.'
+    correctAnswer: 1
   },
   {
     id: '40',
@@ -476,8 +437,7 @@ export const quizData = [
       'Yana haifar da hangen nesa',
       'Yana rage bugun zuciya'
     ],
-    correctAnswer: 1,
-    explanation: 'Caffeine yana aiki ta hanyar toshe masu karɓar adenosine a cikin kwakwalwa, wanda ke haifar da ƙaruwar fahimi da rage gajiya, wanda ya sa "Yana toshe masu karɓar adenosine a cikin kwakwalwa" shine amsar daidai.'
+    correctAnswer: 1
   },
   {
     id: '41',
@@ -488,8 +448,7 @@ export const quizData = [
       'Heroin',
       'Marijuana'
     ],
-    correctAnswer: 1,
-    explanation: 'LSD na iya haifar da koma baya (Rashin fahimta na dindindin na Mai ruɗi) inda masu amfani suka sake fuskantar tasiri bayan ɗaukar maganin, wanda ya sa "LSD" shine amsar daidai.'
+    correctAnswer: 1
   },
   {
     id: '42',
@@ -500,8 +459,7 @@ export const quizData = [
       'Tabbacin aminci',
       'Rage farashi'
     ],
-    correctAnswer: 1,
-    explanation: 'Magunguna tare da tsaftar da ba a sani ba na iya samun ƙarfin da ba a iya faɗi ba, yana ƙara haɗarin yawan shan magani na bazata, wanda ya sa "Ƙarfin da ba a iya faɗi ba da haɗarin yawan shan magani" shine amsar daidai.'
+    correctAnswer: 1
   },
   {
     id: '43',
@@ -512,8 +470,7 @@ export const quizData = [
       'Heroin',
       'LSD'
     ],
-    correctAnswer: 1,
-    explanation: 'Cannabinoids na roba sinadarai ne da aka yi a dakin gwaje-gwaje da aka ƙera don kwaikwayi tasirin THC amma sau da yawa sun fi haɗari, wanda ya sa "Cannabinoids na roba" shine amsar daidai.'
+    correctAnswer: 1
   },
   {
     id: '44',
@@ -524,8 +481,7 @@ export const quizData = [
       'Rage ciwon allura',
       'Mafi kyawun sha magani'
     ],
-    correctAnswer: 1,
-    explanation: 'Raba allura yana ƙara haɗarin yada cututtukan jini kamar HIV da hepatitis B da C, wanda ya sa "Yaduwar HIV da hepatitis" shine amsar daidai.'
+    correctAnswer: 1
   },
   {
     id: '45',
@@ -536,8 +492,7 @@ export const quizData = [
       'Cocaine',
       'Barasa'
     ],
-    correctAnswer: 1,
-    explanation: 'PCP na iya sa masu amfani su ji ba za a iya cin nasara ba kuma su nuna ƙarfin allahntaka, sau da yawa yana haifar da halayen haɗari da raunuka, wanda ya sa "PCP" shine amsar daidai.'
+    correctAnswer: 1
   },
   {
     id: '46',
@@ -548,8 +503,7 @@ export const quizData = [
       'Haifar da ciwo a matsayin illa',
       'Ba su da tasiri akan ciwo'
     ],
-    correctAnswer: 1,
-    explanation: 'Opioids suna aiki ta hanyar ɗaura da masu karɓa a cikin kwakwalwa da toshe siginonin ciwo, yana ba da maganin ciwo mai ƙarfi, wanda ya sa "Tose siginonin ciwo a cikin kwakwalwa" shine amsar daidai.'
+    correctAnswer: 1
   },
   {
     id: '47',
@@ -560,8 +514,7 @@ export const quizData = [
       'Cikakken haɗin kai na jiki',
       'Matsakaicin nauyin jiki'
     ],
-    correctAnswer: 1,
-    explanation: 'Yawancin magunguna suna haifar da canje-canje a cikin girman ɗalibi - masu ƙarfafawa sau da yawa suna faɗaɗa ɗalibi yayin da opioids ke ƙuntata su, wanda ya sa "Alƙuwa ko ƙunƙuntaccen ɗalibi" shine amsar daidai.'
+    correctAnswer: 1
   },
   {
     id: '48',
@@ -572,8 +525,7 @@ export const quizData = [
       'Tabbacin aminci',
       'Ingantaccen tasirin warkewa'
     ],
-    correctAnswer: 1,
-    explanation: 'Haɗa magunguna na iya haifar da haɗuwa mara kyau da haɗari, sau da yawa yana ninka tasirinsu da haɗari, wanda ya sa "Haɗuwa mara kyau da haɗari" shine amsar daidai.'
+    correctAnswer: 1
   },
   {
     id: '49',
@@ -584,8 +536,7 @@ export const quizData = [
       'Heroin',
       'Marijuana'
     ],
-    correctAnswer: 1,
-    explanation: 'Nitrous oxide sau da yawa ana amfani dashi don nishaɗi a cikin "bugu" - ƙananan gwangwani da ake amfani da su don ƙara girman feshin whipped cream, wanda ya sa "Nitrous oxide" shine amsar daidai.'
+    correctAnswer: 1
   },
   {
     id: '50',
@@ -596,10 +547,10 @@ export const quizData = [
       'Koyon yadda ake amfani da magunguna lafiya',
       'Ƙara samun magunguna'
     ],
-    correctAnswer: 1,
-    explanation: 'Shirye-shiryen ilimin magani suna nufin hana cin zarafin magani ta hanyar ba da cikakkun bayanai game da haɗari da sakamako, wanda ya sa "Hana cin zarafin magani ta hanyar ilimi" shine amsar daidai.'
+    correctAnswer: 1
   }
 ];
+
 
 // Function to shuffle questions
 export const getShuffledQuestions = () => {

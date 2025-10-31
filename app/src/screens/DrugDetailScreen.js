@@ -1,17 +1,19 @@
 import { Ionicons } from "@expo/vector-icons";
 import {
   Image,
-  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
+import ResponsiveContainer from '../components/layout/ResponsiveContainer';
 import { useLanguage } from "../context/LanguageContext";
 import { useTTS } from "../context/TTSContext";
+import { useResponsive } from '../hooks/useResponsive';
 import { theme } from "../styles/theme";
 
 const DrugDetailScreen = ({ route, navigation }) => {
+  const { isTablet, scale, responsiveSpacing, moderateScale } = useResponsive();
   const { drug } = route.params;
   const { speak, isSpeaking, isPaused, togglePlayPause, language } = useTTS();
   const { t } = useLanguage();
@@ -87,7 +89,10 @@ const DrugDetailScreen = ({ route, navigation }) => {
               isRisk && { backgroundColor: theme.colors.error },
             ]}
           />
-          <Text style={styles.listText}>{item}</Text>
+          <Text style={[
+            styles.listText,
+            { fontSize: moderateScale(14) }
+          ]}>{item}</Text>
         </View>
       );
     }
@@ -97,55 +102,90 @@ const DrugDetailScreen = ({ route, navigation }) => {
   return (
     <View style={styles.container}>
       {/* Custom Header with Audio */}
-      <View style={styles.header}>
+      <View style={[
+        styles.header,
+        { 
+          paddingHorizontal: responsiveSpacing.md,
+          paddingTop: isTablet ? 70 : 60,
+          paddingBottom: responsiveSpacing.lg
+        }
+      ]}>
         <TouchableOpacity
           onPress={() => navigation.goBack()}
           style={styles.backButton}
         >
-          <Ionicons name="arrow-back" size={24} color={theme.colors.white} />
+          <Ionicons name="arrow-back" size={moderateScale(24)} color={theme.colors.white} />
         </TouchableOpacity>
 
-        <Text style={styles.headerTitle}>Drug Details</Text>
+        <Text style={[
+          styles.headerTitle,
+          { fontSize: isTablet ? moderateScale(26) : moderateScale(24) }
+        ]}>Drug Details</Text>
 
         <TouchableOpacity 
           onPress={handleAudioPress} 
-          style={[styles.audioButton, isSpeaking && styles.audioButtonActive]}
+          style={[
+            styles.audioButton, 
+            isSpeaking && styles.audioButtonActive,
+            { width: moderateScale(40), height: moderateScale(40) }
+          ]}
         >
           <Ionicons
             name={isSpeaking && !isPaused ? "pause" : "volume-high-outline"}
-            size={24}
+            size={moderateScale(24)}
             color={theme.colors.white}
           />
         </TouchableOpacity>
       </View>
 
-      <ScrollView
-        style={styles.content}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContent}
-      >
+      <ResponsiveContainer scrollable={true} style={styles.contentContainer}>
         {/* Drug Header */}
-        <View style={styles.headerSection}>
+        <View style={[
+          styles.headerSection,
+          { 
+            padding: responsiveSpacing.md,
+            marginBottom: responsiveSpacing.lg
+          }
+        ]}>
           {drug.image && (
             <Image
               source={drug.image}
-              style={styles.drugImage}
+              style={[
+                styles.drugImage,
+                { 
+                  width: isTablet ? moderateScale(100) : moderateScale(80),
+                  height: isTablet ? moderateScale(100) : moderateScale(80),
+                  marginRight: responsiveSpacing.md
+                }
+              ]}
               resizeMode="cover"
             />
           )}
           <View style={styles.headerText}>
-            <Text style={styles.drugName}>{drug.name}</Text>
+            <Text style={[
+              styles.drugName,
+              { fontSize: isTablet ? moderateScale(28) : moderateScale(24) }
+            ]}>{drug.name}</Text>
             <View style={styles.typeContainer}>
-              <Text style={styles.drugType}>{drug.type}</Text>
+              <Text style={[
+                styles.drugType,
+                { fontSize: moderateScale(14) }
+              ]}>{drug.type}</Text>
               <View
                 style={[
                   styles.riskBadge,
-                  { backgroundColor: getRiskColor(drug.riskLevel) },
+                  { 
+                    backgroundColor: getRiskColor(drug.riskLevel),
+                    paddingHorizontal: responsiveSpacing.sm,
+                    paddingVertical: responsiveSpacing.xs
+                  }
                 ]}
               >
-                <Text style={styles.riskText}>
-                  {drug.riskLevel ? drug.riskLevel.toUpperCase() : "UNKNOWN"}{" "}
-                  RISK
+                <Text style={[
+                  styles.riskText,
+                  { fontSize: moderateScale(10) }
+                ]}>
+                  {drug.riskLevel ? drug.riskLevel.toUpperCase() : "UNKNOWN"} RISK
                 </Text>
               </View>
             </View>
@@ -153,37 +193,80 @@ const DrugDetailScreen = ({ route, navigation }) => {
         </View>
 
         {/* Risk Level Description */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Risk Level</Text>
-          <Text style={styles.riskDescription}>
+        <View style={[
+          styles.section,
+          { padding: responsiveSpacing.md, marginBottom: responsiveSpacing.md }
+        ]}>
+          <Text style={[
+            styles.sectionTitle,
+            { fontSize: isTablet ? moderateScale(20) : moderateScale(18), marginBottom: responsiveSpacing.sm }
+          ]}>Risk Level</Text>
+          <Text style={[
+            styles.riskDescription,
+            { fontSize: moderateScale(14), lineHeight: moderateScale(20) }
+          ]}>
             {getRiskDescription(drug.riskLevel)}
           </Text>
         </View>
 
         {/* Overview */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Overview</Text>
-          <Text style={styles.description}>
+        <View style={[
+          styles.section,
+          { padding: responsiveSpacing.md, marginBottom: responsiveSpacing.md }
+        ]}>
+          <Text style={[
+            styles.sectionTitle,
+            { fontSize: isTablet ? moderateScale(20) : moderateScale(18), marginBottom: responsiveSpacing.sm }
+          ]}>Overview</Text>
+          <Text style={[
+            styles.description,
+            { fontSize: moderateScale(14), lineHeight: moderateScale(22) }
+          ]}>
             {drug.longDescription || drug.shortDescription}
           </Text>
         </View>
 
         {/* Effects */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Common Effects</Text>
+        <View style={[
+          styles.section,
+          { padding: responsiveSpacing.md, marginBottom: responsiveSpacing.md }
+        ]}>
+          <Text style={[
+            styles.sectionTitle,
+            { fontSize: isTablet ? moderateScale(20) : moderateScale(18), marginBottom: responsiveSpacing.sm }
+          ]}>Common Effects</Text>
           {renderListItems(drug.effects)}
         </View>
 
         {/* Risks */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Health Risks & Dangers</Text>
+        <View style={[
+          styles.section,
+          { padding: responsiveSpacing.md, marginBottom: responsiveSpacing.md }
+        ]}>
+          <Text style={[
+            styles.sectionTitle,
+            { fontSize: isTablet ? moderateScale(20) : moderateScale(18), marginBottom: responsiveSpacing.sm }
+          ]}>Health Risks & Dangers</Text>
           {renderListItems(drug.risks, true)}
         </View>
 
         {/* Warning Section */}
-        <View style={styles.warningSection}>
-          <Text style={styles.warningTitle}>⚠️ Important Warning</Text>
-          <Text style={styles.warningText}>
+        <View style={[
+          styles.warningSection,
+          { 
+            padding: responsiveSpacing.md, 
+            marginBottom: responsiveSpacing.md,
+            borderLeftWidth: moderateScale(4)
+          }
+        ]}>
+          <Text style={[
+            styles.warningTitle,
+            { fontSize: isTablet ? moderateScale(20) : moderateScale(18), marginBottom: responsiveSpacing.sm }
+          ]}>⚠️ Important Warning</Text>
+          <Text style={[
+            styles.warningText,
+            { fontSize: moderateScale(14), lineHeight: moderateScale(20) }
+          ]}>
             Drug abuse is dangerous and can lead to serious health
             complications, addiction, and even death. If you or someone you know
             is struggling with substance abuse, please seek professional help
@@ -192,17 +275,28 @@ const DrugDetailScreen = ({ route, navigation }) => {
         </View>
 
         {/* Emergency Contacts */}
-        <View style={styles.emergencySection}>
-          <Text style={styles.emergencyTitle}>Emergency Contacts</Text>
-          <Text style={styles.emergencyText}>
+        <View style={[
+          styles.emergencySection,
+          { 
+            padding: responsiveSpacing.md,
+            borderLeftWidth: moderateScale(4),
+            marginBottom: theme.spacing.xxl // Add bottom margin for tab bar space
+          }
+        ]}>
+          <Text style={[
+            styles.emergencyTitle,
+            { fontSize: isTablet ? moderateScale(20) : moderateScale(18), marginBottom: responsiveSpacing.sm }
+          ]}>Emergency Contacts</Text>
+          <Text style={[
+            styles.emergencyText,
+            { fontSize: moderateScale(14), lineHeight: moderateScale(20) }
+          ]}>
             NAFDAC Helpline: +234(0)909-763-0506 {"\n"}
             or Complaints call 0800-1-NAFDAC (0800-1-623322){"\n"}
             NDLEA Line: 0800-1020-3040 {"\n"}
           </Text>
         </View>
-
-        <View style={styles.bottomSpacer} />
-      </ScrollView>
+      </ResponsiveContainer>
     </View>
   );
 };
@@ -212,14 +306,14 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: theme.colors.background,
   },
+  contentContainer: {
+    flex: 1,
+  },
   header: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     backgroundColor: theme.colors.primary,
-    paddingHorizontal: theme.spacing.md,
-    paddingVertical: theme.spacing.lg,
-    paddingTop: 60,
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.primaryDark,
     ...theme.shadows.sm,
@@ -228,52 +322,35 @@ const styles = StyleSheet.create({
     padding: theme.spacing.sm,
   },
   headerTitle: {
-    ...theme.typography.h2,
-    color: theme.colors.white,
-    fontSize: 24,
     fontWeight: "600",
+    color: theme.colors.white,
   },
   audioButton: {
-    padding: theme.spacing.sm,
-    borderRadius: 20,
-    width: 40,
-    height: 40,
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: 'rgba(255,255,255,0.2)',
+    borderRadius: 20,
   },
   audioButtonActive: {
     backgroundColor: 'rgba(255,255,255,0.3)',
   },
-  content: {
-    flex: 1,
-  },
-  scrollContent: {
-    padding: theme.spacing.md,
-    paddingBottom: 30,
-  },
   headerSection: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: theme.spacing.lg,
     backgroundColor: theme.colors.white,
-    padding: theme.spacing.md,
     borderRadius: theme.borderRadius.md,
     ...theme.shadows.md,
   },
   drugImage: {
-    width: 80,
-    height: 80,
     borderRadius: theme.borderRadius.md,
-    marginRight: theme.spacing.md,
   },
   headerText: {
     flex: 1,
   },
   drugName: {
-    ...theme.typography.h1,
     color: theme.colors.primary,
     marginBottom: theme.spacing.xs,
+    fontWeight: 'bold',
   },
   typeContainer: {
     flexDirection: "row",
@@ -281,41 +358,30 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
   },
   drugType: {
-    ...theme.typography.body,
     color: theme.colors.textSecondary,
     marginRight: theme.spacing.md,
   },
   riskBadge: {
-    paddingHorizontal: theme.spacing.sm,
-    paddingVertical: theme.spacing.xs,
     borderRadius: theme.borderRadius.sm,
   },
   riskText: {
     color: theme.colors.white,
-    fontSize: 10,
     fontWeight: "bold",
   },
   section: {
     backgroundColor: theme.colors.white,
-    padding: theme.spacing.md,
     borderRadius: theme.borderRadius.md,
-    marginBottom: theme.spacing.md,
     ...theme.shadows.sm,
   },
   sectionTitle: {
-    ...theme.typography.h3,
     color: theme.colors.primary,
-    marginBottom: theme.spacing.sm,
+    fontWeight: '600',
   },
   riskDescription: {
-    ...theme.typography.body,
     color: theme.colors.text,
-    lineHeight: 20,
   },
   description: {
-    ...theme.typography.body,
     color: theme.colors.text,
-    lineHeight: 22,
   },
   listItem: {
     flexDirection: "row",
@@ -331,49 +397,32 @@ const styles = StyleSheet.create({
     marginRight: theme.spacing.sm,
   },
   listText: {
-    ...theme.typography.body,
     color: theme.colors.text,
     flex: 1,
-    lineHeight: 20,
   },
   warningSection: {
     backgroundColor: "#FFF3E0",
-    padding: theme.spacing.md,
     borderRadius: theme.borderRadius.md,
-    marginBottom: theme.spacing.md,
-    borderLeftWidth: 4,
     borderLeftColor: "#FF9800",
   },
   warningTitle: {
-    ...theme.typography.h3,
     color: "#E65100",
-    marginBottom: theme.spacing.sm,
+    fontWeight: '600',
   },
   warningText: {
-    ...theme.typography.body,
     color: "#E65100",
-    lineHeight: 20,
   },
   emergencySection: {
     backgroundColor: "#FFEBEE",
-    padding: theme.spacing.md,
     borderRadius: theme.borderRadius.md,
-    borderLeftWidth: 4,
     borderLeftColor: theme.colors.error,
-    marginBottom: theme.spacing.md,
   },
   emergencyTitle: {
-    ...theme.typography.h3,
     color: theme.colors.error,
-    marginBottom: theme.spacing.sm,
+    fontWeight: '600',
   },
   emergencyText: {
-    ...theme.typography.body,
     color: theme.colors.error,
-    lineHeight: 20,
-  },
-  bottomSpacer: {
-    height: 80,
   },
 });
 

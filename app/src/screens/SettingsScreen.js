@@ -3,23 +3,30 @@ import React from "react";
 import {
   Animated,
   Modal,
-  ScrollView,
   StyleSheet,
   Switch,
   Text,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
 import Button from "../components/common/Button";
 import Card from "../components/common/Cards";
 import Header from "../components/common/Header";
+import ResponsiveContainer from '../components/layout/ResponsiveContainer';
 import { useLanguage } from "../context/LanguageContext";
 import { useTTS } from "../context/TTSContext";
+import { useResponsive } from '../hooks/useResponsive';
 import { theme } from "../styles/theme";
 
 const SettingsScreen = ({ navigation }) => {
+  const { isTablet, scale, responsiveSpacing, moderateScale } = useResponsive();
   const { t, language, changeLanguage } = useLanguage();
-  const { voiceType, changeVoice, isAudioEnabled } = useTTS();
+  const { 
+    changeVoice, 
+    currentVoice,
+    isAudioEnabled
+  } = useTTS();
+  
   const [notifications, setNotifications] = React.useState(true);
   const [darkMode, setDarkMode] = React.useState(false);
   const [studyReminders, setStudyReminders] = React.useState(true);
@@ -42,19 +49,22 @@ const SettingsScreen = ({ navigation }) => {
     { code: "kn", name: "Kanuri", nativeName: "Kanuri", flag: "🇳🇪" },
   ];
 
+  // Simple voice options - just male and female
   const voices = [
-    {
-      id: "female",
-      name: t("settings.femaleVoice"),
-      icon: "female",
-      color: "#EC407A",
-    },
     {
       id: "male",
       name: t("settings.maleVoice"),
       icon: "male",
       color: "#42A5F5",
+      description: t("settings.maleVoiceDesc")
     },
+    {
+      id: "female", 
+      name: t("settings.femaleVoice"),
+      icon: "female",
+      color: "#EC407A",
+      description: t("settings.femaleVoiceDesc")
+    }
   ];
 
   const settingsSections = [
@@ -73,9 +83,9 @@ const SettingsScreen = ({ navigation }) => {
         {
           label: t("settings.voice"),
           description: t("settings.voiceDesc"),
-          value: voiceType,
+          value: currentVoice?.id || 'male',
           onValueChange: () => setShowVoiceModal(true),
-          type: "button",
+          type: "button", 
           icon: "mic-outline",
         },
         {
@@ -150,7 +160,12 @@ const SettingsScreen = ({ navigation }) => {
   };
 
   const handleVoiceSelect = (voiceId) => {
+    console.log('Changing voice to:', voiceId);
+    
+    // For simple male/female selection, we don't need to pass specific voice identifiers
+    // The TTS system will automatically use the appropriate voice for the language
     changeVoice(voiceId);
+    
     setShowVoiceModal(false);
   };
 
@@ -181,16 +196,21 @@ const SettingsScreen = ({ navigation }) => {
 
   const getCurrentVoice = () => {
     if (!voices || !Array.isArray(voices)) {
-      return t("settings.femaleVoice");
+      return t("settings.maleVoice");
     }
 
+    // Get current voice ID or default to male
+    const currentVoiceId = currentVoice?.id || 'male';
+    
+    // Find the voice name
     for (let i = 0; i < voices.length; i++) {
       const voice = voices[i];
-      if (voice && voice.id === voiceType) {
-        return voice.name || t("settings.femaleVoice");
+      if (voice && voice.id === currentVoiceId) {
+        return voice.name || t("settings.maleVoice");
       }
     }
-    return t("settings.femaleVoice");
+    
+    return t("settings.maleVoice");
   };
 
   // Generate screen text for TTS
@@ -221,14 +241,23 @@ const SettingsScreen = ({ navigation }) => {
           ]}
           onPress={() => handleLanguageSelect(lang.code || 'en')}
         >
-          <Text style={styles.optionFlag}>{lang.flag || "🏳️"}</Text>
+          <Text style={[
+            styles.optionFlag,
+            { fontSize: moderateScale(24) }
+          ]}>{lang.flag || "🏳️"}</Text>
           <View style={styles.optionTextContainer}>
-            <Text style={styles.optionName}>{lang.name || "Language"}</Text>
-            <Text style={styles.optionNative}>{lang.nativeName || ""}</Text>
+            <Text style={[
+              styles.optionName,
+              { fontSize: moderateScale(16) }
+            ]}>{lang.name || "Language"}</Text>
+            <Text style={[
+              styles.optionNative,
+              { fontSize: moderateScale(12) }
+            ]}>{lang.nativeName || ""}</Text>
           </View>
           {language === lang.code && (
             <View style={styles.selectedBadge}>
-              <Ionicons name="checkmark" size={16} color={theme.colors.white} />
+              <Ionicons name="checkmark" size={moderateScale(16)} color={theme.colors.white} />
             </View>
           )}
         </TouchableOpacity>
@@ -245,31 +274,55 @@ const SettingsScreen = ({ navigation }) => {
       const voice = voices[i];
       if (!voice) continue;
 
+      const currentVoiceId = currentVoice?.id || 'male';
+      const isSelected = currentVoiceId === voice.id;
+
       voiceElements.push(
         <TouchableOpacity
           key={voice.id || i}
           style={[
             styles.optionItem,
-            voiceType === voice.id && styles.optionItemSelected,
+            isSelected && styles.optionItemSelected,
           ]}
-          onPress={() => handleVoiceSelect(voice.id || 'female')}
+          onPress={() => handleVoiceSelect(voice.id || 'male')}
         >
-          <View style={[styles.voiceIcon, { backgroundColor: voice.color || '#EC407A' }]}>
+          <View style={[
+            styles.voiceIcon, 
+            { 
+              backgroundColor: voice.color || '#42A5F5',
+              width: moderateScale(40),
+              height: moderateScale(40)
+            }
+          ]}>
             <Ionicons 
-              name={voice.icon || 'female'} 
-              size={20} 
+              name={voice.icon || 'male'} 
+              size={moderateScale(20)} 
               color={theme.colors.white} 
             />
           </View>
           <View style={styles.optionTextContainer}>
-            <Text style={styles.optionName}>{voice.name || "Voice"}</Text>
-            <Text style={styles.optionNative}>
-              {voiceType === voice.id ? t("settings.currentVoice") : ""}
+            <Text style={[
+              styles.optionName,
+              { fontSize: moderateScale(16) }
+            ]}>{voice.name || "Voice"}</Text>
+            <Text style={[
+              styles.optionDescription,
+              { fontSize: moderateScale(12) }
+            ]}>
+              {voice.description || ""}
             </Text>
+            {isSelected && (
+              <Text style={[
+                styles.currentVoiceText,
+                { fontSize: moderateScale(12) }
+              ]}>
+                {t("settings.currentVoice")}
+              </Text>
+            )}
           </View>
-          {voiceType === voice.id && (
+          {isSelected && (
             <View style={styles.selectedBadge}>
-              <Ionicons name="checkmark" size={16} color={theme.colors.white} />
+              <Ionicons name="checkmark" size={moderateScale(16)} color={theme.colors.white} />
             </View>
           )}
         </TouchableOpacity>
@@ -287,14 +340,20 @@ const SettingsScreen = ({ navigation }) => {
       if (!section) continue;
 
       sectionElements.push(
-        <Card key={i} style={styles.sectionCard}>
+        <Card key={i} style={[
+          styles.sectionCard,
+          { marginBottom: responsiveSpacing.lg }
+        ]}>
           <View style={styles.sectionHeader}>
             <Ionicons
               name={section.icon || "settings-outline"}
-              size={20}
+              size={moderateScale(20)}
               color={theme.colors.primary}
             />
-            <Text style={styles.sectionTitle}>{section.title || "Section"}</Text>
+            <Text style={[
+              styles.sectionTitle,
+              { fontSize: isTablet ? moderateScale(20) : moderateScale(18) }
+            ]}>{section.title || "Section"}</Text>
           </View>
           {renderSettingsItems(section.items)}
         </Card>
@@ -317,6 +376,7 @@ const SettingsScreen = ({ navigation }) => {
           style={[
             styles.settingItem,
             i < items.length - 1 && styles.settingItemBorder,
+            { paddingVertical: responsiveSpacing.md }
           ]}
           onPress={
             item.type === "button"
@@ -326,25 +386,43 @@ const SettingsScreen = ({ navigation }) => {
           activeOpacity={item.type === "button" ? 0.7 : 1}
         >
           <View style={styles.settingLeft}>
-            <View style={styles.settingIcon}>
+            <View style={[
+              styles.settingIcon,
+              { 
+                width: moderateScale(40),
+                height: moderateScale(40)
+              }
+            ]}>
               <Ionicons
                 name={item.icon || "help-circle-outline"}
-                size={20}
+                size={moderateScale(20)}
                 color={theme.colors.primary}
               />
             </View>
             <View style={styles.settingInfo}>
-              <Text style={styles.settingLabel}>{item.label || "Setting"}</Text>
-              <Text style={styles.settingDescription}>{item.description || ""}</Text>
+              <Text style={[
+                styles.settingLabel,
+                { fontSize: moderateScale(16) }
+              ]}>{item.label || "Setting"}</Text>
+              <Text style={[
+                styles.settingDescription,
+                { fontSize: moderateScale(12) }
+              ]}>{item.description || ""}</Text>
               {item.type === "button" &&
                 item.label === t("settings.language") && (
-                  <Text style={styles.currentValue}>
+                  <Text style={[
+                    styles.currentValue,
+                    { fontSize: moderateScale(12) }
+                  ]}>
                     {getCurrentLanguage()}
                   </Text>
                 )}
               {item.type === "button" && 
                 item.label === t("settings.voice") && (
-                <Text style={styles.currentValue}>{getCurrentVoice()}</Text>
+                <Text style={[
+                  styles.currentValue,
+                  { fontSize: moderateScale(12) }
+                ]}>{getCurrentVoice()}</Text>
               )}
             </View>
           </View>
@@ -363,7 +441,7 @@ const SettingsScreen = ({ navigation }) => {
           {item.type === "button" && (
             <Ionicons
               name="chevron-forward"
-              size={20}
+              size={moderateScale(20)}
               color={theme.colors.textSecondary}
             />
           )}
@@ -385,11 +463,17 @@ const SettingsScreen = ({ navigation }) => {
         activeOpacity={1}
         onPress={onClose}
       >
-        <TouchableOpacity activeOpacity={1} style={styles.modalContent}>
+        <TouchableOpacity activeOpacity={1} style={[
+          styles.modalContent,
+          { maxWidth: isTablet ? 500 : 400 }
+        ]}>
           <View style={styles.modalHeader}>
-            <Text style={styles.modalTitle}>{title || "Select Option"}</Text>
+            <Text style={[
+              styles.modalTitle,
+              { fontSize: isTablet ? moderateScale(22) : moderateScale(20) }
+            ]}>{title || "Select Option"}</Text>
             <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-              <Ionicons name="close" size={24} color={theme.colors.text} />
+              <Ionicons name="close" size={moderateScale(24)} color={theme.colors.text} />
             </TouchableOpacity>
           </View>
           {children}
@@ -403,13 +487,8 @@ const SettingsScreen = ({ navigation }) => {
       <Header 
         title={t("settings.title")} 
         audioText={getScreenText()}
-        style={{ paddingTop: 65 }} 
       />
-      <ScrollView
-        style={styles.content}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContent}
-      >
+      <ResponsiveContainer scrollable={true} style={styles.contentContainer}>
         {renderSettingsSections()}
 
         {/* Language Selection Modal */}
@@ -431,15 +510,33 @@ const SettingsScreen = ({ navigation }) => {
         </ModalOverlay>
 
         {/* App Info */}
-        <Card style={styles.infoCard}>
-          <View style={styles.appIcon}>
-            <Ionicons name="medical" size={40} color={theme.colors.primary} />
+        <Card style={[
+          styles.infoCard,
+          { padding: responsiveSpacing.xl }
+        ]}>
+          <View style={[
+            styles.appIcon,
+            { 
+              width: isTablet ? moderateScale(100) : moderateScale(80),
+              height: isTablet ? moderateScale(100) : moderateScale(80)
+            }
+          ]}>
+            <Ionicons name="medical" size={isTablet ? moderateScale(48) : moderateScale(40)} color={theme.colors.primary} />
           </View>
-          <Text style={styles.infoTitle}>
+          <Text style={[
+            styles.infoTitle,
+            { fontSize: isTablet ? moderateScale(28) : moderateScale(24) }
+          ]}>
             {t("app.name")}
           </Text>
-          <Text style={styles.infoVersion}>Version 2.0.0</Text>
-          <Text style={styles.infoDescription}>
+          <Text style={[
+            styles.infoVersion,
+            { fontSize: moderateScale(12) }
+          ]}>Version 2.0.0</Text>
+          <Text style={[
+            styles.infoDescription,
+            { fontSize: moderateScale(16) }
+          ]}>
             {t("settings.appDescription")}
           </Text>
         </Card>
@@ -461,9 +558,7 @@ const SettingsScreen = ({ navigation }) => {
             icon="log-out-outline"
           />
         </View>
-
-        <View style={styles.bottomSpacer} />
-      </ScrollView>
+      </ResponsiveContainer>
     </Animated.View>
   );
 };
@@ -473,15 +568,10 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: theme.colors.background,
   },
-  content: {
+  contentContainer: {
     flex: 1,
   },
-  scrollContent: {
-    padding: theme.spacing.md,
-    paddingBottom: 80,
-  },
   sectionCard: {
-    marginBottom: theme.spacing.lg,
     borderRadius: theme.borderRadius.lg,
     ...theme.shadows.md,
   },
@@ -494,17 +584,14 @@ const styles = StyleSheet.create({
     borderBottomColor: "#F5F5F5",
   },
   sectionTitle: {
-    ...theme.typography.h3,
-    fontSize: 18,
-    fontWeight: '600',
     marginLeft: theme.spacing.sm,
     color: theme.colors.primary,
+    fontWeight: '600',
   },
   settingItem: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingVertical: theme.spacing.md,
   },
   settingItemBorder: {
     borderBottomWidth: 1,
@@ -516,8 +603,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   settingIcon: {
-    width: 40,
-    height: 40,
     borderRadius: 20,
     backgroundColor: "#E8F5E8",
     alignItems: "center",
@@ -528,21 +613,15 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   settingLabel: {
-    ...theme.typography.body,
-    fontSize: 16,
     fontWeight: "600",
-    marginBottom: 2,
     color: theme.colors.text,
+    marginBottom: 2,
   },
   settingDescription: {
-    ...theme.typography.caption,
-    fontSize: 12,
     color: theme.colors.textSecondary,
     lineHeight: 16,
   },
   currentValue: {
-    ...theme.typography.caption,
-    fontSize: 12,
     color: theme.colors.primary,
     marginTop: 2,
     fontWeight: "600",
@@ -559,7 +638,6 @@ const styles = StyleSheet.create({
     borderRadius: theme.borderRadius.xl,
     padding: theme.spacing.lg,
     width: "100%",
-    maxWidth: 400,
     ...theme.shadows.lg,
   },
   modalHeader: {
@@ -569,12 +647,10 @@ const styles = StyleSheet.create({
     marginBottom: theme.spacing.lg,
   },
   modalTitle: {
-    ...theme.typography.h3,
-    fontSize: 18,
-    fontWeight: '600',
     flex: 1,
     textAlign: "center",
     color: theme.colors.text,
+    fontWeight: '600',
   },
   closeButton: {
     padding: 4,
@@ -597,12 +673,9 @@ const styles = StyleSheet.create({
     backgroundColor: "#E8F5E8",
   },
   optionFlag: {
-    fontSize: 24,
     marginRight: theme.spacing.md,
   },
   voiceIcon: {
-    width: 40,
-    height: 40,
     borderRadius: 20,
     alignItems: "center",
     justifyContent: "center",
@@ -612,15 +685,17 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   optionName: {
-    ...theme.typography.body,
-    fontSize: 16,
     fontWeight: "600",
     color: theme.colors.text,
   },
-  optionNative: {
-    ...theme.typography.caption,
-    fontSize: 12,
+  optionDescription: {
     color: theme.colors.textSecondary,
+    marginTop: 2,
+  },
+  currentVoiceText: {
+    color: theme.colors.primary,
+    marginTop: 2,
+    fontWeight: "600",
   },
   selectedBadge: {
     width: 24,
@@ -633,13 +708,10 @@ const styles = StyleSheet.create({
   infoCard: {
     alignItems: "center",
     marginBottom: theme.spacing.lg,
-    padding: theme.spacing.xl,
     borderRadius: theme.borderRadius.lg,
     ...theme.shadows.md,
   },
   appIcon: {
-    width: 80,
-    height: 80,
     borderRadius: 40,
     backgroundColor: "#E8F5E8",
     alignItems: "center",
@@ -647,35 +719,26 @@ const styles = StyleSheet.create({
     marginBottom: theme.spacing.md,
   },
   infoTitle: {
-    ...theme.typography.h2,
-    fontSize: 24,
-    fontWeight: '700',
     marginBottom: theme.spacing.xs,
     color: theme.colors.primary,
     textAlign: "center",
+    fontWeight: '700',
   },
   infoVersion: {
-    ...theme.typography.caption,
-    fontSize: 12,
     color: theme.colors.textSecondary,
     marginBottom: theme.spacing.md,
   },
   infoDescription: {
-    ...theme.typography.body,
-    fontSize: 16,
     textAlign: "center",
     lineHeight: 22,
     color: theme.colors.text,
   },
   actionButtons: {
     gap: theme.spacing.md,
-    marginBottom: theme.spacing.md,
+    marginBottom: theme.spacing.xxl,
   },
   actionButton: {
     marginBottom: 0,
-  },
-  bottomSpacer: {
-    height: 80,
   },
 });
 

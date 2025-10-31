@@ -1,12 +1,15 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import { useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, Animated, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Animated, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Button, Header } from '../components/common';
+import ResponsiveContainer from '../components/layout/ResponsiveContainer';
 import { useLanguage } from '../context/LanguageContext';
 import { useTTS } from '../context/TTSContext';
+import { useResponsive } from '../hooks/useResponsive';
 import { theme } from '../styles/theme';
 
 const QuizScreen = () => {
+  const { isTablet, scale, responsiveSpacing, moderateScale } = useResponsive();
   const { t, language, getShuffledQuestions } = useLanguage();
   const { speak, isSpeaking, isPaused, togglePlayPause } = useTTS();
   const [questions, setQuestions] = useState([]);
@@ -14,13 +17,25 @@ const QuizScreen = () => {
   const [score, setScore] = useState(0);
   const [showScore, setShowScore] = useState(false);
   const [selectedAnswer, setSelectedAnswer] = useState(null);
-  const [showExplanation, setShowExplanation] = useState(false);
+  const [showResult, setShowResult] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(20)).current;
   const optionAnimations = useRef([]).current;
+
+  // Use moderateScale if available, otherwise fallback to a simple scaling function
+  const getScaledSize = (size) => {
+    if (typeof moderateScale === 'function') {
+      return moderateScale(size);
+    } else if (typeof scale === 'function') {
+      return scale(size);
+    } else {
+      // Fallback scaling based on tablet detection
+      return isTablet ? size * 1.2 : size;
+    }
+  };
 
   useEffect(() => {
     initializeQuiz();
@@ -49,7 +64,7 @@ const QuizScreen = () => {
       setScore(0);
       setShowScore(false);
       setSelectedAnswer(null);
-      setShowExplanation(false);
+      setShowResult(false);
       
       Animated.parallel([
         Animated.timing(fadeAnim, {
@@ -65,7 +80,6 @@ const QuizScreen = () => {
       ]).start();
     } catch (err) {
       setError(t('common.failedToLoadQuiz') || 'Failed to load quiz');
-      console.error('Quiz initialization error:', err);
     } finally {
       setIsLoading(false);
     }
@@ -93,14 +107,14 @@ const QuizScreen = () => {
       setScore(prevScore => prevScore + 1);
     }
     
-    setShowExplanation(true);
+    setShowResult(true);
   };
 
   const handleNextQuestion = () => {
     if (currentQuestion + 1 < questions.length) {
       setCurrentQuestion(currentQuestion + 1);
       setSelectedAnswer(null);
-      setShowExplanation(false);
+      setShowResult(false);
     } else {
       setShowScore(true);
     }
@@ -110,7 +124,7 @@ const QuizScreen = () => {
     if (currentQuestion > 0) {
       setCurrentQuestion(currentQuestion - 1);
       setSelectedAnswer(null);
-      setShowExplanation(false);
+      setShowResult(false);
     }
   };
 
@@ -122,10 +136,10 @@ const QuizScreen = () => {
     text += `${question.question}. `;
     text += `Options: ${(question.options || []).join('. ')}`;
     
-    if (showExplanation) {
+    if (showResult) {
       const isCorrect = selectedAnswer === question.correctAnswer;
       const status = isCorrect ? t('quiz.correct') : t('quiz.incorrect');
-      text += `. Answer: ${status}. ${question.explanation || ''}`;
+      text += `. Answer: ${status}.`;
     }
     
     return text;
@@ -164,7 +178,7 @@ const QuizScreen = () => {
       setScore(0);
       setShowScore(false);
       setSelectedAnswer(null);
-      setShowExplanation(false);
+      setShowResult(false);
       setError(null);
     } catch (err) {
       setError(t('common.failedToRestartQuiz') || 'Failed to restart quiz');
@@ -183,7 +197,7 @@ const QuizScreen = () => {
       const option = questionOptions[i];
       const animation = optionAnimations[i];
       
-      const scale = animation ? animation.interpolate({
+      const scaleTransform = animation ? animation.interpolate({
         inputRange: [0, 1],
         outputRange: [0.95, 1],
       }) : new Animated.Value(1);
@@ -193,11 +207,11 @@ const QuizScreen = () => {
           key={i}
           style={[
             styles.optionContainer,
-            { transform: [{ scale }] }
+            { transform: [{ scale: scaleTransform }] }
           ]}
         >
           <TouchableOpacity
-            onPress={() => !showExplanation && handleAnswerSelect(i)}
+            onPress={() => !showResult && handleAnswerSelect(i)}
             activeOpacity={0.8}
             style={styles.optionTouchable}
           >
@@ -212,23 +226,33 @@ const QuizScreen = () => {
                   styles.optionIndicator,
                   getOptionIndicatorStyle(i, question)
                 ]}>
-                  <Text style={styles.optionIndicatorText}>
+                  <Text style={[
+                    styles.optionIndicatorText,
+                    { fontSize: getScaledSize(14) }
+                  ]}>
                     {String.fromCharCode(65 + i)}
                   </Text>
                 </View>
                 <Text style={[
                   styles.optionText,
-                  getOptionTextStyle(i, question)
+                  getOptionTextStyle(i, question),
+                  { fontSize: isTablet ? getScaledSize(16) : getScaledSize(14) }
                 ]}>
                   {option}
                 </Text>
                 
-                {showExplanation && (
+                {showResult && (
                   <View style={styles.statusIcon}>
                     {i === question.correctAnswer ? (
-                      <Text style={styles.correctIcon}>✓</Text>
+                      <Text style={[
+                        styles.correctIcon,
+                        { fontSize: getScaledSize(20) }
+                      ]}>✓</Text>
                     ) : selectedAnswer === i ? (
-                      <Text style={styles.incorrectIcon}>✕</Text>
+                      <Text style={[
+                        styles.incorrectIcon,
+                        { fontSize: getScaledSize(20) }
+                      ]}>✕</Text>
                     ) : null}
                   </View>
                 )}
@@ -244,7 +268,7 @@ const QuizScreen = () => {
   const getOptionGradient = (index, question) => {
     if (!question) return ['#FFFFFF', '#F8FAFC'];
     
-    if (!showExplanation) {
+    if (!showResult) {
       return selectedAnswer === index 
         ? ['#4F46E5', '#3730A3'] 
         : ['#FFFFFF', '#F8FAFC'];
@@ -261,7 +285,7 @@ const QuizScreen = () => {
   const getOptionIndicatorStyle = (index, question) => {
     if (!question) return {};
     
-    if (!showExplanation) {
+    if (!showResult) {
       return selectedAnswer === index 
         ? styles.optionIndicatorSelected 
         : {};
@@ -278,7 +302,7 @@ const QuizScreen = () => {
   const getOptionTextStyle = (index, question) => {
     if (!question) return {};
     
-    if (!showExplanation) {
+    if (!showResult) {
       return selectedAnswer === index 
         ? styles.optionTextSelected 
         : {};
@@ -300,7 +324,10 @@ const QuizScreen = () => {
             style={styles.loadingGradient}
           >
             <ActivityIndicator size="large" color={theme.colors.white} />
-            <Text style={styles.loadingText}>
+            <Text style={[
+              styles.loadingText,
+              { fontSize: isTablet ? getScaledSize(20) : getScaledSize(18) }
+            ]}>
               {t('common.preparingQuiz') || 'Preparing your quiz...'}
             </Text>
           </LinearGradient>
@@ -318,11 +345,20 @@ const QuizScreen = () => {
             colors={['#FEF2F2', '#FEE2E2']}
             style={styles.errorGradient}
           >
-            <Text style={styles.errorIcon}>⚠️</Text>
-            <Text style={styles.errorTitle}>
+            <Text style={[
+              styles.errorIcon,
+              { fontSize: getScaledSize(48) }
+            ]}>⚠️</Text>
+            <Text style={[
+              styles.errorTitle,
+              { fontSize: isTablet ? getScaledSize(24) : getScaledSize(22) }
+            ]}>
               {t('common.quizUnavailable') || 'Quiz Unavailable'}
             </Text>
-            <Text style={styles.errorText}>
+            <Text style={[
+              styles.errorText,
+              { fontSize: getScaledSize(14) }
+            ]}>
               {error || t('common.unableToLoadQuiz') || 'Unable to load quiz questions'}
             </Text>
             <Button
@@ -355,11 +391,7 @@ const QuizScreen = () => {
           onAudioPress={handleHeaderAudioPress}
           audioText={getScoreText()}
         />
-        <ScrollView 
-          style={styles.content} 
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.scoreContentContainer}
-        >
+        <ResponsiveContainer scrollable={true} style={styles.contentContainer}>
           <View style={styles.scoreCard}>
             <LinearGradient
               colors={getScoreGradient()}
@@ -367,23 +399,44 @@ const QuizScreen = () => {
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
             >
-              <Text style={styles.scoreTitle}>
+              <Text style={[
+                styles.scoreTitle,
+                { fontSize: isTablet ? getScaledSize(32) : getScaledSize(28) }
+              ]}>
                 {t('quiz.quizCompleted')}
               </Text>
               
-              <View style={styles.scoreCircle}>
-                <Text style={styles.scorePercentage}>{percentage}%</Text>
-                <Text style={styles.scoreSubtitle}>
+              <View style={[
+                styles.scoreCircle,
+                { 
+                  width: isTablet ? getScaledSize(160) : getScaledSize(140),
+                  height: isTablet ? getScaledSize(160) : getScaledSize(140)
+                }
+              ]}>
+                <Text style={[
+                  styles.scorePercentage,
+                  { fontSize: isTablet ? getScaledSize(48) : getScaledSize(42) }
+                ]}>{percentage}%</Text>
+                <Text style={[
+                  styles.scoreSubtitle,
+                  { fontSize: getScaledSize(14) }
+                ]}>
                   {t('common.score')}
                 </Text>
               </View>
               
-              <Text style={styles.scoreText}>
+              <Text style={[
+                styles.scoreText,
+                { fontSize: isTablet ? getScaledSize(22) : getScaledSize(20) }
+              ]}>
                 {score} / {questions.length} {t('quiz.correct')}
               </Text>
 
               <View style={styles.performanceMessage}>
-                <Text style={styles.performanceText}>
+                <Text style={[
+                  styles.performanceText,
+                  { fontSize: getScaledSize(16) }
+                ]}>
                   {percentage >= 80 ? t('quiz.outstanding') : 
                    percentage >= 60 ? t('quiz.greatJob') : 
                    percentage >= 40 ? t('quiz.goodEffort') : 
@@ -403,7 +456,7 @@ const QuizScreen = () => {
               />
             </View>
           </View>
-        </ScrollView>
+        </ResponsiveContainer>
       </Animated.View>
     );
   }
@@ -414,7 +467,10 @@ const QuizScreen = () => {
       <View style={styles.container}>
         <Header title={t('quiz.title')} />
         <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>
+          <Text style={[
+            styles.errorText,
+            { fontSize: getScaledSize(16) }
+          ]}>
             {t('common.questionNotFound') || 'Question not found'}
           </Text>
           <Button
@@ -436,11 +492,7 @@ const QuizScreen = () => {
         audioText={getCurrentQuestionText()}
       />
       
-      <ScrollView 
-        style={styles.content} 
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.quizContentContainer}
-      >
+      <ResponsiveContainer scrollable={true} style={styles.contentContainer}>
         {/* Progress Section */}
         <View style={styles.progressSection}>
           <LinearGradient
@@ -450,10 +502,16 @@ const QuizScreen = () => {
             end={{ x: 1, y: 1 }}
           >
             <View style={styles.progressHeader}>
-              <Text style={styles.progressText}>
+              <Text style={[
+                styles.progressText,
+                { fontSize: getScaledSize(14) }
+              ]}>
                 {t('quiz.question')} {currentQuestion + 1} {t('quiz.of')} {questions.length}
               </Text>
-              <Text style={styles.progressPercentage}>
+              <Text style={[
+                styles.progressPercentage,
+                { fontSize: getScaledSize(16) }
+              ]}>
                 {Math.round(((currentQuestion + 1) / questions.length) * 100)}%
               </Text>
             </View>
@@ -478,10 +536,16 @@ const QuizScreen = () => {
           >
             <View style={styles.questionHeader}>
               <View style={styles.questionNumber}>
-                <Text style={styles.questionNumberText}>Q{currentQuestion + 1}</Text>
+                <Text style={[
+                  styles.questionNumberText,
+                  { fontSize: getScaledSize(14) }
+                ]}>Q{currentQuestion + 1}</Text>
               </View>
               <View style={styles.questionContent}>
-                <Text style={styles.questionText}>{question.question}</Text>
+                <Text style={[
+                  styles.questionText,
+                  { fontSize: isTablet ? getScaledSize(20) : getScaledSize(18) }
+                ]}>{question.question}</Text>
               </View>
             </View>
           </LinearGradient>
@@ -492,33 +556,45 @@ const QuizScreen = () => {
           {renderOptions()}
         </View>
 
-        {/* Explanation */}
-        {showExplanation && (
-          <View style={styles.explanationCard}>
+        {/* Result Status */}
+        {showResult && (
+          <View style={styles.resultCard}>
             <LinearGradient
-              colors={['#EFF6FF', '#DBEAFE']}
-              style={styles.explanationGradient}
+              colors={selectedAnswer === question.correctAnswer ? ['#ECFDF5', '#D1FAE5'] : ['#FEF2F2', '#FEE2E2']}
+              style={styles.resultGradient}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
             >
-              <Text style={styles.explanationTitle}>💡 {t('quiz.explanation')}</Text>
-              <View style={styles.answerStatusContainer}>
-                <View style={[
-                  styles.answerStatus,
-                  selectedAnswer === question.correctAnswer ? styles.answerStatusCorrect : styles.answerStatusIncorrect
+              <View style={styles.resultHeader}>
+                <Text style={[
+                  styles.resultIcon,
+                  { fontSize: getScaledSize(24) }
                 ]}>
-                  <Text style={styles.answerStatusText}>
+                  {selectedAnswer === question.correctAnswer ? '🎉' : '💡'}
+                </Text>
+                <View style={styles.resultTextContainer}>
+                  <Text style={[
+                    styles.resultTitle,
+                    { fontSize: isTablet ? getScaledSize(20) : getScaledSize(18) }
+                  ]}>
                     {selectedAnswer === question.correctAnswer ? t('quiz.correct') : t('quiz.incorrect')}
+                  </Text>
+                  <Text style={[
+                    styles.resultSubtitle,
+                    { fontSize: getScaledSize(14) }
+                  ]}>
+                    {selectedAnswer === question.correctAnswer 
+                      ? t('quiz.greatJobAnswer') || 'Great job! You got it right.'
+                      : t('quiz.betterLuckNextTime') || 'Better luck next time!'}
                   </Text>
                 </View>
               </View>
-              <Text style={styles.explanationText}>{question.explanation}</Text>
             </LinearGradient>
           </View>
         )}
 
         {/* Navigation Buttons */}
-        {showExplanation && (
+        {showResult && (
           <View style={styles.navigationButtons}>
             {currentQuestion > 0 && (
               <Button
@@ -546,9 +622,7 @@ const QuizScreen = () => {
             />
           </View>
         )}
-
-        <View style={styles.bottomSpacer} />
-      </ScrollView>
+      </ResponsiveContainer>
     </Animated.View>
   );
 };
@@ -558,18 +632,8 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F8FAFC',
   },
-  content: {
+  contentContainer: {
     flex: 1,
-  },
-  quizContentContainer: {
-    padding: theme.spacing.lg,
-    paddingTop: theme.spacing.md,
-    paddingBottom: 100,
-  },
-  scoreContentContainer: {
-    padding: theme.spacing.lg,
-    paddingTop: theme.spacing.md,
-    paddingBottom: 120,
   },
   loadingContainer: {
     flex: 1,
@@ -582,10 +646,10 @@ const styles = StyleSheet.create({
     padding: theme.spacing.xl,
   },
   loadingText: {
-    ...theme.typography.h3,
     color: theme.colors.white,
     marginTop: theme.spacing.lg,
     textAlign: 'center',
+    fontWeight: '600',
   },
   errorContainer: {
     flex: 1,
@@ -599,18 +663,13 @@ const styles = StyleSheet.create({
     padding: theme.spacing.xl,
     borderRadius: theme.borderRadius.xl,
   },
-  errorIcon: {
-    fontSize: 48,
-    marginBottom: theme.spacing.lg,
-  },
   errorTitle: {
-    ...theme.typography.h2,
     color: theme.colors.error,
     marginBottom: theme.spacing.md,
     textAlign: 'center',
+    fontWeight: '700',
   },
   errorText: {
-    ...theme.typography.body,
     color: theme.colors.textSecondary,
     textAlign: 'center',
     marginBottom: theme.spacing.xl,
@@ -635,12 +694,10 @@ const styles = StyleSheet.create({
     marginBottom: theme.spacing.md,
   },
   progressText: {
-    ...theme.typography.body,
     fontWeight: '600',
     color: theme.colors.white,
   },
   progressPercentage: {
-    ...theme.typography.h4,
     fontWeight: '700',
     color: theme.colors.white,
   },
@@ -656,13 +713,13 @@ const styles = StyleSheet.create({
     borderRadius: theme.borderRadius.round,
   },
   questionCard: {
-    marginBottom: theme.spacing.xl,
+    marginBottom: theme.spacing.lg,
     borderRadius: theme.borderRadius.xl,
     overflow: 'hidden',
     ...theme.shadows.md,
   },
   questionGradient: {
-    padding: theme.spacing.xl,
+    padding: theme.spacing.lg,
   },
   questionHeader: {
     flexDirection: 'row',
@@ -679,7 +736,6 @@ const styles = StyleSheet.create({
     ...theme.shadows.sm,
   },
   questionNumberText: {
-    ...theme.typography.bodySmall,
     color: theme.colors.white,
     fontWeight: '700',
   },
@@ -687,7 +743,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   questionText: {
-    ...theme.typography.h3,
     lineHeight: 28,
     color: theme.colors.text,
     fontWeight: '600',
@@ -733,12 +788,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#EF4444',
   },
   optionIndicatorText: {
-    ...theme.typography.body,
     fontWeight: '700',
     color: '#64748B',
   },
   optionText: {
-    ...theme.typography.body,
     flex: 1,
     color: theme.colors.text,
     fontWeight: '500',
@@ -751,61 +804,47 @@ const styles = StyleSheet.create({
     marginLeft: theme.spacing.md,
   },
   correctIcon: {
-    fontSize: 20,
     color: theme.colors.white,
     fontWeight: 'bold',
   },
   incorrectIcon: {
-    fontSize: 20,
     color: theme.colors.white,
     fontWeight: 'bold',
   },
-  explanationCard: {
+  resultCard: {
     marginBottom: theme.spacing.xl,
     borderRadius: theme.borderRadius.xl,
     overflow: 'hidden',
     ...theme.shadows.md,
   },
-  explanationGradient: {
-    padding: theme.spacing.xl,
+  resultGradient: {
+    padding: theme.spacing.lg,
   },
-  explanationTitle: {
-    ...theme.typography.h4,
-    color: '#1E40AF',
+  resultHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  resultIcon: {
+    marginRight: theme.spacing.md,
+  },
+  resultTextContainer: {
+    flex: 1,
+  },
+  resultTitle: {
     fontWeight: '700',
-    marginBottom: theme.spacing.md,
+    marginBottom: theme.spacing.xs,
   },
-  answerStatusContainer: {
-    marginBottom: theme.spacing.md,
-  },
-  answerStatus: {
-    paddingHorizontal: theme.spacing.md,
-    paddingVertical: theme.spacing.xs,
-    borderRadius: theme.borderRadius.round,
-    alignSelf: 'flex-start',
-  },
-  answerStatusCorrect: {
-    backgroundColor: '#10B98120',
-  },
-  answerStatusIncorrect: {
-    backgroundColor: '#EF444420',
-  },
-  answerStatusText: {
-    ...theme.typography.caption,
-    fontWeight: '700',
-    color: theme.colors.text,
-  },
-  explanationText: {
-    ...theme.typography.body,
-    lineHeight: 24,
-    color: theme.colors.text,
+  resultSubtitle: {
+    color: theme.colors.textSecondary,
+    lineHeight: 20,
   },
   navigationButtons: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: theme.spacing.xl,
+    marginBottom: theme.spacing.xxl,
     gap: theme.spacing.md,
+    paddingBottom: theme.spacing.xl,
   },
   backButton: {
     flex: 1,
@@ -824,15 +863,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   scoreTitle: {
-    ...theme.typography.h1,
     color: theme.colors.white,
     marginBottom: theme.spacing.xl,
     textAlign: 'center',
     fontWeight: '800',
   },
   scoreCircle: {
-    width: 140,
-    height: 140,
     borderRadius: 70,
     backgroundColor: 'rgba(255,255,255,0.2)',
     alignItems: 'center',
@@ -843,18 +879,14 @@ const styles = StyleSheet.create({
     ...theme.shadows.lg,
   },
   scorePercentage: {
-    ...theme.typography.h1,
-    fontSize: 42,
     color: theme.colors.white,
     fontWeight: '900',
   },
   scoreSubtitle: {
-    ...theme.typography.body,
     color: 'rgba(255,255,255,0.9)',
     marginTop: theme.spacing.xs,
   },
   scoreText: {
-    ...theme.typography.h3,
     color: theme.colors.white,
     marginBottom: theme.spacing.lg,
     textAlign: 'center',
@@ -869,7 +901,6 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(255,255,255,0.3)',
   },
   performanceText: {
-    ...theme.typography.body,
     fontWeight: '700',
     color: theme.colors.white,
     textAlign: 'center',
@@ -877,12 +908,10 @@ const styles = StyleSheet.create({
   scoreActions: {
     padding: theme.spacing.xl,
     gap: theme.spacing.md,
+    paddingBottom: theme.spacing.xxl,
   },
   actionButton: {
     marginBottom: 0,
-  },
-  bottomSpacer: {
-    height: 80,
   },
 });
 

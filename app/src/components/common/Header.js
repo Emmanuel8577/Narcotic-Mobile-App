@@ -7,7 +7,7 @@ const Header = ({ title, subtitle, rightComponent, style, showBackButton, onBack
       <StatusBar backgroundColor={theme.colors.primary} barStyle="light-content" />
       <View style={[{
         backgroundColor: theme.colors.primary,
-        paddingTop: 50, // Extended padding for status bar
+        paddingTop: 20, // Extended padding for status bar
         paddingBottom: theme.spacing.lg,
         paddingHorizontal: theme.spacing.md,
       }, style]}>

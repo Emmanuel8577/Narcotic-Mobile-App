@@ -23,6 +23,7 @@ export const TTSProvider = ({ children }) => {
     kn: false
   });
   const [currentSpeechId, setCurrentSpeechId] = useState(null);
+  const [currentVoice, setCurrentVoice] = useState(null); // Add current voice state
 
   useEffect(() => {
     checkAvailableVoices();
@@ -59,6 +60,30 @@ export const TTSProvider = ({ children }) => {
       setAvailableLanguages(languages);
     } catch (error) {
       console.error('Error checking available voices:', error);
+    }
+  };
+
+  // Add the missing changeVoice function
+  const changeVoice = async (voiceIdentifier) => {
+    try {
+      if (!voiceIdentifier) {
+        console.log('Resetting to default voice');
+        setCurrentVoice(null);
+        return;
+      }
+
+      // Find the voice object by identifier
+      const voice = supportedVoices.find(v => v.identifier === voiceIdentifier);
+      if (voice) {
+        setCurrentVoice(voice);
+        console.log('Voice changed to:', voice.name);
+      } else {
+        console.warn('Voice not found:', voiceIdentifier);
+        setCurrentVoice(null);
+      }
+    } catch (error) {
+      console.error('Error changing voice:', error);
+      setCurrentVoice(null);
     }
   };
 
@@ -242,13 +267,15 @@ export const TTSProvider = ({ children }) => {
       }
 
       const languageCode = getLanguageCode(language);
-      const voice = getMaleVoiceForLanguage(language);
+      
+      // Use current voice if set, otherwise find male voice for language
+      const voice = currentVoice || getMaleVoiceForLanguage(language);
       const speechParams = getMaleSpeechParameters(language);
 
-      console.log(`Speaking ${language} with MALE voice:`, {
+      console.log(`Speaking ${language} with voice:`, {
         textLength: text.length,
         languageCode,
-        hasMaleVoice: !!voice,
+        voice: voice?.name || 'default',
         speechParams
       });
 
@@ -256,36 +283,36 @@ export const TTSProvider = ({ children }) => {
         language: languageCode,
         ...speechParams,
         onStart: () => {
-          console.log(`Male speech started for ${language}`);
+          console.log(`Speech started for ${language}`);
           setIsSpeaking(true);
           setIsPaused(false);
         },
         onDone: () => {
-          console.log(`Male speech completed for ${language}`);
+          console.log(`Speech completed for ${language}`);
           setIsSpeaking(false);
           setIsPaused(false);
           setCurrentSpeechId(null);
         },
         onError: (error) => {
-          console.error('Male speech error:', error);
+          console.error('Speech error:', error);
           setIsSpeaking(false);
           setIsPaused(false);
           setCurrentSpeechId(null);
         },
         onStopped: () => {
-          console.log(`Male speech stopped for ${language}`);
+          console.log(`Speech stopped for ${language}`);
           setIsSpeaking(false);
           setIsPaused(false);
           setCurrentSpeechId(null);
         }
       };
 
-      // Add male voice if available
+      // Add voice if available
       if (voice && voice.identifier) {
         speakOptions.voice = voice.identifier;
-        console.log(`Using MALE voice: ${voice.name} for ${language}`);
+        console.log(`Using voice: ${voice.name} for ${language}`);
       } else {
-        console.log(`Using default system voice for ${language} (male parameters applied)`);
+        console.log(`Using default system voice for ${language}`);
       }
 
       // Pre-process text for male African speech patterns
@@ -295,14 +322,14 @@ export const TTSProvider = ({ children }) => {
       setCurrentSpeechId(speechId);
 
     } catch (error) {
-      console.error('Male speak error:', error);
+      console.error('Speak error:', error);
       setIsSpeaking(false);
       setIsPaused(false);
       setCurrentSpeechId(null);
     }
   };
 
-  // Test function with male voice samples
+  // Test function with voice samples
   const testMaleTTS = async () => {
     const testMessages = {
       en: 'Hello friends. This is an English test message for drug education. We will speak slowly and clearly.',
@@ -310,34 +337,34 @@ export const TTSProvider = ({ children }) => {
       kn: 'Ashkhar kusurwu. Non Kanuri test kuru na. Nda ajiya kuru nda nda ajiya kaska. A jiye a hankali.'
     };
 
-    console.log('Starting MALE TTS test for all languages...');
+    console.log('Starting TTS test for all languages...');
 
     for (const [lang, message] of Object.entries(testMessages)) {
       if (availableLanguages[lang]) {
         try {
-          console.log(`Testing ${lang.toUpperCase()} MALE TTS...`);
+          console.log(`Testing ${lang.toUpperCase()} TTS...`);
           
           await new Promise((resolve) => {
             let resolved = false;
             
-            const voice = getMaleVoiceForLanguage(lang);
+            const voice = currentVoice || getMaleVoiceForLanguage(lang);
             const params = getMaleSpeechParameters(lang);
             
             Speech.speak(message, {
               language: getLanguageCode(lang),
               ...params,
               voice: voice?.identifier,
-              onStart: () => console.log(`🎯 ${lang.toUpperCase()} MALE TTS started`),
+              onStart: () => console.log(`🎯 ${lang.toUpperCase()} TTS started`),
               onDone: () => {
                 if (!resolved) {
-                  console.log(`✅ ${lang.toUpperCase()} MALE TTS completed`);
+                  console.log(`✅ ${lang.toUpperCase()} TTS completed`);
                   resolved = true;
                   resolve();
                 }
               },
               onError: (error) => {
                 if (!resolved) {
-                  console.error(`❌ Error testing ${lang} male TTS:`, error);
+                  console.error(`❌ Error testing ${lang} TTS:`, error);
                   resolved = true;
                   resolve();
                 }
@@ -345,18 +372,18 @@ export const TTSProvider = ({ children }) => {
             });
           });
           
-          // Longer wait between tests for male speech rhythm
+          // Longer wait between tests for speech rhythm
           await new Promise(resolve => setTimeout(resolve, 3000));
           
         } catch (error) {
-          console.error(`Error in male TTS test for ${lang}:`, error);
+          console.error(`Error in TTS test for ${lang}:`, error);
         }
       } else {
-        console.log(`⚠️ ${lang.toUpperCase()} male TTS not available`);
+        console.log(`⚠️ ${lang.toUpperCase()} TTS not available`);
       }
     }
     
-    console.log('Male TTS test completed');
+    console.log('TTS test completed');
   };
 
   // Enhanced language support with voice gender info
@@ -392,13 +419,13 @@ export const TTSProvider = ({ children }) => {
 
   const stop = async () => {
     try {
-      console.log('Stopping male speech...');
+      console.log('Stopping speech...');
       await Speech.stop();
       setIsSpeaking(false);
       setIsPaused(false);
       setCurrentSpeechId(null);
     } catch (error) {
-      console.error('Error stopping male speech:', error);
+      console.error('Error stopping speech:', error);
       setIsSpeaking(false);
       setIsPaused(false);
       setCurrentSpeechId(null);
@@ -416,10 +443,10 @@ export const TTSProvider = ({ children }) => {
       if (isSpeaking && !isPaused) {
         await Speech.pause();
         setIsPaused(true);
-        console.log('Male speech paused');
+        console.log('Speech paused');
       }
     } catch (error) {
-      console.error('Error pausing male speech:', error);
+      console.error('Error pausing speech:', error);
     }
   };
 
@@ -434,10 +461,10 @@ export const TTSProvider = ({ children }) => {
       if (isSpeaking && isPaused) {
         await Speech.resume();
         setIsPaused(false);
-        console.log('Male speech resumed');
+        console.log('Speech resumed');
       }
     } catch (error) {
-      console.error('Error resuming male speech:', error);
+      console.error('Error resuming speech:', error);
     }
   };
 
@@ -460,7 +487,7 @@ export const TTSProvider = ({ children }) => {
         }
       }
     } catch (error) {
-      console.error('Error toggling male speech play/pause:', error);
+      console.error('Error toggling speech play/pause:', error);
     }
   };
 
@@ -473,22 +500,34 @@ export const TTSProvider = ({ children }) => {
     });
   };
 
+  // Get available voices for a specific language
+  const getVoicesForLanguage = (language) => {
+    const languageCode = getLanguageCode(language);
+    return supportedVoices.filter(voice => 
+      voice.language.includes(languageCode) || 
+      voice.language.includes(languageCode.split('-')[0])
+    );
+  };
+
   const value = {
     isSpeaking,
     isPaused,
     isAudioEnabled,
     availableLanguages,
     supportedVoices,
+    currentVoice,
     speak,
     pause,
     resume,
     togglePlayPause,
     stop,
+    changeVoice, // Add the missing function
     setIsAudioEnabled,
     toggleAudio,
     testTTS: testMaleTTS,
     checkAvailableVoices,
     checkLanguageSupport,
+    getVoicesForLanguage,
     supportsPauseResume: Platform.OS === 'ios',
     hasMaleVoice: (language) => !!getMaleVoiceForLanguage(language),
   };

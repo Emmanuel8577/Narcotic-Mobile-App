@@ -3,8 +3,6 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useEffect, useRef, useState } from "react";
 import {
   Animated,
-  Dimensions,
-  Easing,
   ScrollView,
   StyleSheet,
   Text,
@@ -14,14 +12,16 @@ import {
 import Button from "../components/common/Button";
 import Card from "../components/common/Cards";
 import Header from "../components/common/Header";
+import ResponsiveContainer from '../components/layout/ResponsiveContainer';
+import ResponsiveGrid from '../components/layout/ResponsiveGrid';
 import { useAuth } from "../context/AuthContext";
 import { useLanguage } from "../context/LanguageContext";
 import { useTTS } from "../context/TTSContext";
+import { useResponsive } from '../hooks/useResponsive';
 import { theme } from "../styles/theme";
 
-const { width } = Dimensions.get("window");
-
 const HomeScreen = ({ navigation }) => {
+  const { isTablet, scale, responsiveSpacing, moderateScale, screenWidth } = useResponsive();
   const { t } = useLanguage();
   const { userProfile } = useAuth();
   const { speak } = useTTS();
@@ -52,7 +52,6 @@ const HomeScreen = ({ navigation }) => {
       Animated.timing(slideAnim, {
         toValue: 0,
         duration: 800,
-        easing: Easing.out(Easing.cubic),
         useNativeDriver: true,
       }),
     ]).start();
@@ -190,10 +189,16 @@ const HomeScreen = ({ navigation }) => {
           ],
         }}
       >
-        <Card style={styles.statCard}>
+        <Card style={[
+          styles.statCard,
+          { width: isTablet ? screenWidth * 0.45 : screenWidth * 0.75 }
+        ]}>
           <LinearGradient
             colors={stat.gradient}
-            style={styles.statGradient}
+            style={[
+              styles.statGradient,
+              { minHeight: isTablet ? 160 : 140 }
+            ]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
           >
@@ -201,20 +206,26 @@ const HomeScreen = ({ navigation }) => {
               <View
                 style={[
                   styles.statIcon,
-                  { backgroundColor: "rgba(255,255,255,0.2)" },
+                  { 
+                    width: isTablet ? moderateScale(60) : moderateScale(50),
+                    height: isTablet ? moderateScale(60) : moderateScale(50),
+                    backgroundColor: "rgba(255,255,255,0.2)" 
+                  }
                 ]}
               >
-                <Text style={styles.statIconText}>{stat.icon}</Text>
+                <Text style={[
+                  styles.statIconText,
+                  { fontSize: isTablet ? moderateScale(26) : moderateScale(22) }
+                ]}>{stat.icon}</Text>
               </View>
-              <Text style={styles.statValue}>{stat.value}</Text>
-              <Text style={styles.statLabel}>{stat.label}</Text>
-            </View>
-
-            {/* Animated particles */}
-            <View style={styles.particleContainer}>
-              <View style={[styles.particle, styles.particle1]} />
-              <View style={[styles.particle, styles.particle2]} />
-              <View style={[styles.particle, styles.particle3]} />
+              <Text style={[
+                styles.statValue,
+                { fontSize: isTablet ? moderateScale(28) : moderateScale(24) }
+              ]}>{stat.value}</Text>
+              <Text style={[
+                styles.statLabel,
+                { fontSize: isTablet ? moderateScale(14) : moderateScale(12) }
+              ]}>{stat.label}</Text>
             </View>
           </LinearGradient>
         </Card>
@@ -253,28 +264,15 @@ const HomeScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Animated.View
-        style={[styles.headerContainer, { opacity: headerOpacity }]}
-      >
-        <Header
-          title={getTranslation("home.title", "Home")}
-          subtitle={getTranslation(
-            "home.subtitle",
-            "Welcome to Narcotic Action"
-          )}
-          style={{ paddingTop: 65 }}
-        />
-      </Animated.View>
-
-      <Animated.ScrollView
-        style={styles.content}
-        showsVerticalScrollIndicator={false}
-        onScroll={Animated.event(
-          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-          { useNativeDriver: true }
+      <Header
+        title={getTranslation("home.title", "Home")}
+        subtitle={getTranslation(
+          "home.subtitle",
+          "Welcome to Narcotic Action"
         )}
-        scrollEventThrottle={16}
-      >
+      />
+
+      <ResponsiveContainer scrollable={true} style={styles.contentContainer}>
         {/* Welcome Hero Section */}
         <Animated.View
           style={{
@@ -285,37 +283,51 @@ const HomeScreen = ({ navigation }) => {
           <Card style={styles.heroCard}>
             <LinearGradient
               colors={["#6366F1", "#8B5CF6", "#7C3AED"]}
-              style={styles.heroGradient}
+              style={[
+                styles.heroGradient,
+                { minHeight: isTablet ? 200 : 180 }
+              ]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
             >
-              {/* Background Pattern */}
-              <View style={styles.heroPattern}>
-                <View style={[styles.patternCircle, styles.patternCircle1]} />
-                <View style={[styles.patternCircle, styles.patternCircle2]} />
-                <View style={[styles.patternCircle, styles.patternCircle3]} />
-              </View>
               <View style={styles.heroContent}>
                 <View style={styles.heroTextContent}>
                   <View style={styles.heroHeader}>
-                    <View style={styles.heroIcon}>
+                    <View style={[
+                      styles.heroIcon,
+                      { 
+                        width: isTablet ? moderateScale(60) : moderateScale(50),
+                        height: isTablet ? moderateScale(60) : moderateScale(50)
+                      }
+                    ]}>
                       <Ionicons
                         name="shield-checkmark"
-                        size={32}
+                        size={isTablet ? moderateScale(36) : moderateScale(32)}
                         color="#FFFFFF"
                       />
                     </View>
-                    <Text style={styles.heroTitle}>
+                    <Text style={[
+                      styles.heroTitle,
+                      { fontSize: isTablet ? moderateScale(28) : moderateScale(24) }
+                    ]}>
                       Welcome, {getUserFirstName()}!
                     </Text>
                     <TouchableOpacity
-                      style={styles.audioButton}
+                      style={[
+                        styles.audioButton,
+                        { 
+                          padding: isTablet ? moderateScale(10) : moderateScale(8)
+                        }
+                      ]}
                       onPress={handlePlayWelcomeAudio}
                     >
-                      <Ionicons name="volume-high" size={20} color="#FFFFFF" />
+                      <Ionicons name="volume-high" size={isTablet ? moderateScale(24) : moderateScale(20)} color="#FFFFFF" />
                     </TouchableOpacity>
                   </View>
-                  <Text style={styles.heroDescription}>
+                  <Text style={[
+                    styles.heroDescription,
+                    { fontSize: isTablet ? moderateScale(16) : moderateScale(15) }
+                  ]}>
                     {getTranslation(
                       "home.welcomeText",
                       "Empowering students with knowledge to combat substance abuse and build healthier communities"
@@ -323,66 +335,99 @@ const HomeScreen = ({ navigation }) => {
                   </Text>
                 </View>
               </View>
-
-              {/* Wave Decoration */}
-              <View style={styles.waveDecoration}>
-                <View style={styles.wave} />
-                <View style={[styles.wave, styles.wave2]} />
-              </View>
             </LinearGradient>
           </Card>
         </Animated.View>
 
-        {/* Stats Grid with Horizontal Scroll */}
-        <Text style={styles.sectionTitle}>
+        {/* Stats Grid */}
+        <Text style={[
+          styles.sectionTitle,
+          { fontSize: isTablet ? moderateScale(24) : moderateScale(20) }
+        ]}>
           {getTranslation("home.ourImpact", "Our Impact")}
         </Text>
         
-        <ScrollView 
-          horizontal 
-          showsHorizontalScrollIndicator={false}
-          style={styles.statsScrollView}
-          contentContainerStyle={styles.statsScrollContent}
-        >
-          {renderStats()}
-        </ScrollView>
+        {isTablet ? (
+          <ResponsiveGrid columns={2} spacing="lg">
+            {renderStats()}
+          </ResponsiveGrid>
+        ) : (
+          <ScrollView 
+            horizontal 
+            showsHorizontalScrollIndicator={false}
+            style={styles.statsScrollView}
+            contentContainerStyle={styles.statsScrollContent}
+          >
+            {renderStats()}
+          </ScrollView>
+        )}
 
         {/* Quick Actions */}
-        <Text style={styles.sectionTitle}>
+        <Text style={[
+          styles.sectionTitle,
+          { fontSize: isTablet ? moderateScale(24) : moderateScale(20) }
+        ]}>
           {getTranslation("home.quickActions", "Quick Actions")}
         </Text>
-        <View style={styles.actionsGrid}>
-          {renderActionButton(
-            "home.learnAboutDrugs",
-            "Learn About Drugs",
-            "Education",
-            "primary",
-            "book-outline"
-          )}
-          {renderActionButton(
-            "home.takeQuiz",
-            "Take Quiz",
-            "Quiz",
-            "secondary",
-            "help-circle-outline"
-          )}
-          {renderActionButton(
-            "home.meetPresidents",
-            "Meet Club Leaders",
-            "Presidents",
-            "primary",
-            "people-outline"
-          )}
-        </View>
+        
+        {isTablet ? (
+          <ResponsiveGrid columns={2} spacing="md">
+            {renderActionButton(
+              "home.learnAboutDrugs",
+              "Learn About Drugs",
+              "Education",
+              "primary",
+              "book-outline"
+            )}
+            {renderActionButton(
+              "home.takeQuiz",
+              "Take Quiz",
+              "Quiz",
+              "secondary",
+              "help-circle-outline"
+            )}
+            {renderActionButton(
+              "home.meetPresidents",
+              "Meet Club Leaders",
+              "Presidents",
+              "primary",
+              "people-outline"
+            )}
+          </ResponsiveGrid>
+        ) : (
+          <View style={styles.actionsGrid}>
+            {renderActionButton(
+              "home.learnAboutDrugs",
+              "Learn About Drugs",
+              "Education",
+              "primary",
+              "book-outline"
+            )}
+            {renderActionButton(
+              "home.takeQuiz",
+              "Take Quiz",
+              "Quiz",
+              "secondary",
+              "help-circle-outline"
+            )}
+            {renderActionButton(
+              "home.meetPresidents",
+              "Meet Club Leaders",
+              "Presidents",
+              "primary",
+              "people-outline"
+            )}
+          </View>
+        )}
 
-        {/* Emergency Section */}
+        {/* Emergency Section with bottom margin */}
         <Animated.View
           style={{
             opacity: fadeAnim,
             transform: [{ translateY: slideAnim }],
           }}
         >
-          <Card style={styles.emergencyCard}>
+          <Card style={[styles.emergencyCard, styles.bottomSpacing]}>
             <LinearGradient
               colors={["#FEF2F2", "#FEE2E2"]}
               style={styles.emergencyGradient}
@@ -391,14 +436,26 @@ const HomeScreen = ({ navigation }) => {
             >
               <View style={styles.emergencyContent}>
                 <View style={styles.emergencyHeader}>
-                  <View style={styles.emergencyIcon}>
-                    <Ionicons name="warning" size={24} color="#DC2626" />
+                  <View style={[
+                    styles.emergencyIcon,
+                    { 
+                      width: isTablet ? moderateScale(55) : moderateScale(45),
+                      height: isTablet ? moderateScale(55) : moderateScale(45)
+                    }
+                  ]}>
+                    <Ionicons name="warning" size={isTablet ? moderateScale(28) : moderateScale(24)} color="#DC2626" />
                   </View>
-                  <Text style={styles.emergencyTitle}>
+                  <Text style={[
+                    styles.emergencyTitle,
+                    { fontSize: isTablet ? moderateScale(22) : moderateScale(20) }
+                  ]}>
                     {getTranslation("home.needHelp", "Need Immediate Help?")}
                   </Text>
                 </View>
-                <Text style={styles.emergencyText}>
+                <Text style={[
+                  styles.emergencyText,
+                  { fontSize: isTablet ? moderateScale(16) : moderateScale(14) }
+                ]}>
                   {getTranslation(
                     "home.helpText",
                     "If you or someone you know is struggling with substance abuse, reach out for professional help immediately. Your wellbeing matters."
@@ -413,23 +470,10 @@ const HomeScreen = ({ navigation }) => {
                   gradient
                 />
               </View>
-
-              {/* Emergency Pattern */}
-              <View style={styles.emergencyPattern}>
-                <View
-                  style={[styles.emergencyParticle, styles.emergencyParticle1]}
-                />
-                <View
-                  style={[styles.emergencyParticle, styles.emergencyParticle2]}
-                />
-              </View>
             </LinearGradient>
           </Card>
         </Animated.View>
-
-        {/* Bottom Spacer for Tab Bar */}
-        <View style={styles.bottomSpacer} />
-      </Animated.ScrollView>
+      </ResponsiveContainer>
     </View>
   );
 };
@@ -439,17 +483,8 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: theme.colors.background,
   },
-  headerContainer: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    zIndex: 10,
-  },
-  content: {
+  contentContainer: {
     flex: 1,
-    padding: theme.spacing.lg,
-    paddingTop: 160,
   },
   heroCard: {
     marginBottom: theme.spacing.xl,
@@ -463,37 +498,6 @@ const styles = StyleSheet.create({
   },
   heroGradient: {
     padding: theme.spacing.xl,
-    minHeight: 180,
-  },
-  heroPattern: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-  },
-  patternCircle: {
-    position: "absolute",
-    borderRadius: 999,
-    backgroundColor: "rgba(255,255,255,0.05)",
-  },
-  patternCircle1: {
-    width: 100,
-    height: 100,
-    top: -30,
-    right: -30,
-  },
-  patternCircle2: {
-    width: 60,
-    height: 60,
-    bottom: -20,
-    left: -20,
-  },
-  patternCircle3: {
-    width: 40,
-    height: 40,
-    top: "30%",
-    right: 50,
   },
   heroContent: {
     flex: 1,
@@ -509,8 +513,6 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
   },
   heroIcon: {
-    width: 50,
-    height: 50,
     borderRadius: theme.borderRadius.lg,
     backgroundColor: "rgba(255,255,255,0.2)",
     alignItems: "center",
@@ -518,54 +520,24 @@ const styles = StyleSheet.create({
     marginRight: theme.spacing.md,
   },
   heroTitle: {
-    ...theme.typography.h2,
     color: theme.colors.white,
     flex: 1,
-    fontSize: 24,
     fontWeight: "800",
   },
   audioButton: {
-    padding: 8,
     backgroundColor: "rgba(255,255,255,0.2)",
     borderRadius: theme.borderRadius.round,
     marginLeft: theme.spacing.sm,
   },
   heroDescription: {
-    ...theme.typography.body,
     color: "rgba(255,255,255,0.9)",
     lineHeight: 22,
-    fontSize: 15,
-  },
-  waveDecoration: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    height: 15,
-  },
-  wave: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    height: 8,
-    backgroundColor: "rgba(255,255,255,0.1)",
-    borderTopLeftRadius: 15,
-    borderTopRightRadius: 15,
-  },
-  wave2: {
-    bottom: -4,
-    backgroundColor: "rgba(255,255,255,0.05)",
-    height: 12,
   },
   sectionTitle: {
-    ...theme.typography.h3,
     marginBottom: theme.spacing.lg,
     color: theme.colors.text,
     fontWeight: "700",
-    fontSize: 20,
   },
-  // Updated styles for horizontal scroll
   statsScrollView: {
     marginBottom: theme.spacing.xxl,
   },
@@ -574,7 +546,6 @@ const styles = StyleSheet.create({
     gap: theme.spacing.md,
   },
   statCard: {
-    width: width * 0.75, // 75% of screen width for better scroll experience
     borderRadius: theme.borderRadius.xl,
     overflow: "hidden",
     shadowColor: "#000",
@@ -582,72 +553,33 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 20,
     elevation: 8,
-    marginRight: theme.spacing.md,
   },
   statGradient: {
     padding: theme.spacing.lg,
     alignItems: "center",
-    minHeight: 140,
-    minWidth: width * 0.75,
   },
   statContent: {
     alignItems: "center",
     zIndex: 2,
   },
   statIcon: {
-    width: 50,
-    height: 50,
     borderRadius: theme.borderRadius.lg,
     alignItems: "center",
     justifyContent: "center",
     marginBottom: theme.spacing.md,
   },
   statIconText: {
-    fontSize: 22,
+    // Font size set dynamically
   },
   statValue: {
-    ...theme.typography.h1,
     color: theme.colors.white,
     marginBottom: theme.spacing.xs,
-    fontSize: 24,
     fontWeight: "800",
   },
   statLabel: {
-    ...theme.typography.caption,
     textAlign: "center",
     color: "rgba(255,255,255,0.9)",
     fontWeight: "600",
-    fontSize: 12,
-  },
-  particleContainer: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-  },
-  particle: {
-    position: "absolute",
-    borderRadius: 999,
-    backgroundColor: "rgba(255,255,255,0.1)",
-  },
-  particle1: {
-    width: 20,
-    height: 20,
-    top: 10,
-    right: 15,
-  },
-  particle2: {
-    width: 12,
-    height: 12,
-    bottom: 20,
-    left: 10,
-  },
-  particle3: {
-    width: 8,
-    height: 8,
-    top: "40%",
-    right: 25,
   },
   actionsGrid: {
     gap: theme.spacing.md,
@@ -664,7 +596,9 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 20,
     elevation: 8,
-    marginBottom: 140,
+  },
+  bottomSpacing: {
+    marginBottom: theme.spacing.xxl,
   },
   emergencyGradient: {
     padding: theme.spacing.xl,
@@ -679,8 +613,6 @@ const styles = StyleSheet.create({
     marginBottom: theme.spacing.md,
   },
   emergencyIcon: {
-    width: 45,
-    height: 45,
     borderRadius: theme.borderRadius.lg,
     backgroundColor: "rgba(220, 38, 38, 0.1)",
     alignItems: "center",
@@ -688,45 +620,16 @@ const styles = StyleSheet.create({
     marginRight: theme.spacing.md,
   },
   emergencyTitle: {
-    ...theme.typography.h3,
     color: "#DC2626",
     fontWeight: "700",
   },
   emergencyText: {
-    ...theme.typography.body,
     marginBottom: theme.spacing.lg,
     lineHeight: 24,
     color: "#7F1D1D",
   },
   emergencyButton: {
     alignSelf: "flex-start",
-  },
-  emergencyPattern: {
-    position: "absolute",
-    top: 0,
-    right: 0,
-    bottom: 0,
-    left: 0,
-  },
-  emergencyParticle: {
-    position: "absolute",
-    borderRadius: 999,
-    backgroundColor: "rgba(220, 38, 38, 0.05)",
-  },
-  emergencyParticle1: {
-    width: 30,
-    height: 30,
-    top: 10,
-    right: 20,
-  },
-  emergencyParticle2: {
-    width: 15,
-    height: 15,
-    bottom: 15,
-    left: 15,
-  },
-  bottomSpacer: {
-    height: 120,
   },
 });
 
